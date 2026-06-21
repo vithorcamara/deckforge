@@ -1,0 +1,199 @@
+/* main.css - Folha de Estilos Unificada e Estilos Globais */
+@import "./reset.css";
+@import "./fonts.css";
+@import "./variables.css";
+
+/* Prevent layout overflow and provide sane defaults */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Allow flex children to shrink instead of overflowing their container */
+/* Specific selectors to avoid interfering with third-party components */
+.card-info,
+.deck-item-info,
+.mini-card-info,
+.deck-card-info,
+.filter-group {
+  min-width: 0;
+}
+
+/* Better word breaking for long text */
+p, h1, h2, h3, h4, h5, h6, .card-name, .deck-item-name {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar Personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--bg-color);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+/* Estilos de Elementos Globais */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.5rem;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.8rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Classes Utilitárias Comuns */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.glass-card {
+  background: var(--gradient-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.glass-card:hover {
+  border-color: rgba(223, 177, 91, 0.3);
+  box-shadow: var(--shadow-lg), var(--shadow-gold);
+}
+
+/* Botões Estilizados */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient-gold);
+  color: var(--bg-color);
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md), 0 0 12px rgba(223, 177, 91, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--surface-color);
+  color: var(--color-primary);
+  border: 1px solid var(--glass-border);
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--color-primary);
+}
+
+/* ------------------------- */
+/* Responsive Utilities/Base  */
+/* ------------------------- */
+@media (max-width: 900px) {
+  .container {
+    padding: 0 1rem;
+    max-width: 100vw;
+  }
+
+  #logo {
+    display: none;
+  }
+  
+  footer{
+    display: none;
+  }
+
+  header{
+    position: 'fixed';
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+}

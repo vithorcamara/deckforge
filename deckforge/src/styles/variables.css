@@ -1,0 +1,54 @@
+/* variables.css - Tokens de Design */
+:root {
+  /* Cores Base (HSL para manipulação fácil) */
+  --bg-color-raw: 222, 24%, 6%; /* #0c0e12 */
+  --surface-color-raw: 220, 20%, 10%; /* #14161d */
+  --surface-hover-raw: 220, 20%, 14%; /* #1e212b */
+  
+  --bg-color: hsl(var(--bg-color-raw));
+  --surface-color: hsl(var(--surface-color-raw));
+  --surface-hover: hsl(var(--surface-hover-raw));
+  
+  /* Cores de Acento */
+  --color-primary-raw: 40, 68%, 62%; /* Dourado / Bronze: #dfb15b */
+  --color-primary: hsl(var(--color-primary-raw));
+  --color-primary-hover: hsl(40, 68%, 52%);
+  
+  --color-secondary-raw: 263, 90%, 66%; /* Violeta / Magia: #8b5cf6 */
+  --color-secondary: hsl(var(--color-secondary-raw));
+  
+  /* Cores de Estado */
+  --color-success: hsl(150, 84%, 37%); /* Verde */
+  --color-warning: hsl(38, 92%, 50%);  /* Laranja / Alerta */
+  --color-danger: hsl(350, 89%, 60%);  /* Vermelho / Erro */
+  
+  /* Cores de Texto */
+  --text-primary: hsl(210, 20%, 98%);  /* Off-white */
+  --text-secondary: hsl(215, 15%, 75%); /* Cinza Claro */
+  --text-muted: hsl(215, 12%, 50%);     /* Cinza Muted */
+  
+  /* Glassmorphism e Bordas */
+  --glass-bg: rgba(20, 22, 29, 0.6);
+  --glass-border: rgba(223, 177, 91, 0.15); /* Borda levemente dourada */
+  --border-radius-sm: 6px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 20px;
+  --border-color: rgba(255, 255, 255, 0.08);
+  
+  /* Gradientes Premium */
+  --gradient-gold: linear-gradient(135deg, hsl(40, 68%, 62%) 0%, hsl(35, 75%, 45%) 100%);
+  --gradient-magic: linear-gradient(135deg, hsl(263, 90%, 66%) 0%, hsl(280, 85%, 50%) 100%);
+  --gradient-dark: linear-gradient(180deg, hsl(220, 20%, 10%) 0%, hsl(222, 24%, 6%) 100%);
+  --gradient-card: linear-gradient(145deg, rgba(30, 33, 43, 0.8) 0%, rgba(20, 22, 29, 0.8) 100%);
+  
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 0 20px rgba(223, 177, 91, 0.15);
+  
+  /* Transições e Animações */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
