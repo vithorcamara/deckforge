@@ -188,6 +188,13 @@ export function searchCards({ query = '', type = '', attribute = '', race = '', 
 }
 
 /**
+ * Returns all cards that belong to a specific set name.
+ */
+export async function getCardsBySetName(setName) {
+  return await db.cards.filter(c => c.card_sets?.some(s => s.set_name === setName)).toArray();
+}
+
+/**
  * Fetches full details of a card from IndexedDB.
  * @param {number} id - Card passcode.
  */
