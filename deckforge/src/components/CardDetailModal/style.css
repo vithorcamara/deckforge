@@ -167,6 +167,29 @@
   border-color: rgba(255, 159, 28, 0.2);
 }
 
+.modal-collection-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.modal-collection-actions .btn-primary {
+  width: fit-content;
+  padding: 0.8rem 1rem;
+}
+
+.modal-collection-info,
+.modal-collection-status {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.modal-collection-status {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .modal-stats-box {
   display: flex;
   gap: 1.5rem;

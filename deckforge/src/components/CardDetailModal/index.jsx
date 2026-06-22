@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
 import { getCardById } from '../../services/cardService';
+import { addCardToCollection, getCollectionItem } from '../../services/collectionService';
 import './style.css';
 
 export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [collectionQty, setCollectionQty] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     if (!cardId) return;
     setLoading(true);
+    setStatusMessage('');
     getCardById(cardId)
-      .then(data => {
+      .then(async data => {
         setCard(data);
+        const saved = await getCollectionItem(cardId);
+        setCollectionQty(saved?.quantity || 0);
         setLoading(false);
       })
       .catch(err => {
@@ -97,6 +103,27 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                   <span className="modal-badge">
                     Type: {card.race}
                   </span>
+                )}
+              </div>
+
+              <div className="modal-collection-actions">
+                <button
+                  className="btn-primary"
+                  onClick={async () => {
+                    const updated = await addCardToCollection(card.id, 1);
+                    setCollectionQty(updated?.quantity || 0);
+                    setStatusMessage('Carta adicionada à coleção!');
+                  }}
+                >
+                  Adicionar à Coleção
+                </button>
+                {collectionQty > 0 && (
+                  <span className="modal-collection-info">
+                    Você já possui {collectionQty} cópia{collectionQty === 1 ? '' : 's'} desta carta.
+                  </span>
+                )}
+                {statusMessage && (
+                  <div className="modal-collection-status">{statusMessage}</div>
                 )}
               </div>
 

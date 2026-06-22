@@ -5,6 +5,7 @@ import { checkAndSyncCards } from './services/cardService';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import Builder from './pages/Builder';
+import Collection from './pages/Collection';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -216,19 +217,7 @@ function App() {
           
           {activeTab === 'builder' && <Builder />}
 
-          {activeTab === 'collection' && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', textAlign: 'center' }}>
-              <div className="glass-card" style={{ maxWidth: '500px', padding: '3rem 2rem', border: '1px dashed var(--border-color)' }}>
-                <span style={{ fontSize: '3rem', marginBottom: '1rem', display: 'block' }}>📊</span>
-                <h2 style={{ background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1rem' }}>
-                  Gerenciador de Coleção
-                </h2>
-                <p style={{ lineHeight: 1.6, color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0 }}>
-                  A gestão de sua coleção física de cartas está a caminho! Você poderá registrar quais cartas possui para comparar com listas de decks prontas e simular custos e compras de cartas faltantes.
-                </p>
-              </div>
-            </div>
-          )}
+          {activeTab === 'collection' && <Collection />}
         </div>
       </main>
 

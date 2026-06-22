@@ -100,7 +100,7 @@ export default function Builder() {
     if (!editingDeck) return;
     const result = searchCards({
       query: localQuery,
-      limit: 15
+      limit: 50
     });
     setLocalResults(result.cards);
   }, [localQuery, editingDeck]);
