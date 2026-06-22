@@ -13,6 +13,7 @@ import {
   getCardSets
 } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
+import appLogo from '/favicon.png';
 import './style.css';
 
 export default function Builder() {
@@ -136,7 +137,7 @@ export default function Builder() {
       cardDetails?.card_images?.[0]?.image_url ||
       cardDetails?.image_url_small ||
       cardDetails?.image_url ||
-      'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'
+      appLogo
     );
   };
 
@@ -446,7 +447,7 @@ export default function Builder() {
                           className="mini-card-image"
                           onClick={() => setSelectedDetailCardId(card.id)}
                           onError={e => {
-                            e.target.src = 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg';
+                            e.target.src = appLogo;
                           }}
                         />
                         <div className="mini-card-info">
@@ -532,7 +533,7 @@ export default function Builder() {
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
                             onError={e => {
-                              e.target.src = 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg';
+                              e.target.src = appLogo;
                             }}
                           />
                           <div className="deck-item-info">
@@ -575,7 +576,7 @@ export default function Builder() {
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
                             onError={e => {
-                              e.target.src = 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg';
+                              e.target.src = appLogo;
                             }}
                           />
                           <div className="deck-item-info">
@@ -618,7 +619,7 @@ export default function Builder() {
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
                             onError={e => {
-                              e.target.src = 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg';
+                              e.target.src = appLogo;
                             }}
                           />
                           <div className="deck-item-info">

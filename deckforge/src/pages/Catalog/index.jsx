@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { searchCards, getArchetypes, getCardSets } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
+import appLogo from '/favicon.png';
 import './style.css';
 
 const ATTRIBUTES = ['DARK', 'LIGHT', 'EARTH', 'WATER', 'FIRE', 'WIND', 'DIVINE'];
@@ -247,7 +248,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
                       loading="lazy"
                       className="card-image"
                       onError={e => {
-                        e.target.src = 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg';
+                        e.target.src = appLogo;
                       }}
                     />
                   </div>

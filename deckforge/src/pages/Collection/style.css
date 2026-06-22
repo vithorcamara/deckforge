@@ -108,6 +108,14 @@
   margin-left: 0.75rem;
 }
 
+.loading-set-note {
+  display: inline-flex;
+  margin-left: 0.75rem;
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
 .toggle-missing-btn {
   border: none;
   background: rgba(223, 177, 91, 0.12);
@@ -117,43 +125,10 @@
   cursor: pointer;
 }
 
-.missing-set-block {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 1rem;
-}
-
-.missing-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.missing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.75rem;
-}
-
-.missing-card-item {
-  border-radius: 10px;
-  padding: 0.85rem;
-  background: rgba(0, 0, 0, 0.18);
-  border: 1px solid var(--border-color);
-}
-
-.missing-card-name {
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 0.35rem;
-}
-
 .missing-card-rarity {
   color: var(--text-secondary);
   font-size: 0.85rem;
+  margin-top: 0.25rem;
 }
 
 .missing-loading,
@@ -161,6 +136,28 @@
   color: var(--text-secondary);
   font-size: 0.95rem;
   padding: 1rem 0;
+}
+
+.collection-item--missing {
+  opacity: 0.75;
+  border-color: rgba(223, 177, 91, 0.25);
+  background: rgba(223, 177, 91, 0.08);
+}
+
+.btn-add-missing {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-primary);
+  color: var(--bg-color);
+  cursor: pointer;
+  font-size: 1.25rem;
+  align-self: center;
+}
+
+.btn-add-missing:hover {
+  transform: scale(1.05);
 }
 
 .collection-item {
@@ -175,8 +172,8 @@
 }
 
 .collection-item .thumb {
-  width: 74px;
-  height: 104px;
+  width: 59px;
+  height: 86px;
   flex: 0 0 74px;
   overflow: hidden;
   border-radius: 6px;
@@ -204,6 +201,36 @@
 .collection-item .set {
   font-size: 0.8rem;
   color: var(--text-secondary);
+}
+
+.collection-item--missing {
+  opacity: 0.85;
+  border-color: rgba(223, 177, 91, 0.25);
+  background: rgba(223, 177, 91, 0.08);
+}
+
+.collection-item--missing .name {
+  color: var(--color-primary);
+}
+
+.collection-item--missing .missing-card-rarity {
+  margin-top: 0.35rem;
+}
+
+.btn-add-missing {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-primary);
+  color: var(--bg-color);
+  cursor: pointer;
+  font-size: 1.15rem;
+  align-self: center;
+}
+
+.btn-add-missing:hover {
+  transform: scale(1.05);
 }
 
 .qty-controls {

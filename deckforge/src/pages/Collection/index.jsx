@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getCollectionItems, updateCollectionQuantity, clearCollection } from '../../services/collectionService';
+import { getCollectionItems, updateCollectionQuantity, clearCollection, addCardToCollection } from '../../services/collectionService';
 import { getCardById, getCardsBySetName } from '../../services/cardService';
+import CardDetailModal from '../../components/CardDetailModal';
+import appLogo from '/favicon.png';
 import './style.css';
 
 const SORT_OPTIONS = [
@@ -16,6 +18,7 @@ export default function Collection() {
   const [loading, setLoading] = useState(true);
   const [sortMode, setSortMode] = useState('name');
   const [missingBySet, setMissingBySet] = useState({});
+  const [selectedCardId, setSelectedCardId] = useState(null);
   const [missingLoading, setMissingLoading] = useState(false);
   const [expandedMissing, setExpandedMissing] = useState({});
 
@@ -59,6 +62,11 @@ export default function Collection() {
 
   const changeQty = async (cardId, newQty) => {
     await updateCollectionQuantity(cardId, newQty);
+    await loadCollection();
+  };
+
+  const addMissingCard = async (cardId) => {
+    await addCardToCollection(cardId, 1);
     await loadCollection();
   };
 
@@ -176,6 +184,9 @@ export default function Collection() {
                 <div>
                   <strong>{groupName}</strong>
                   <span className="group-meta">{groupItems.length} cartas</span>
+                  {sortMode === 'set' && missingLoading && (
+                    <span className="loading-set-note">Carregando Set...</span>
+                  )}
                 </div>
                 {sortMode === 'set' && missingBySet[groupName] && (
                   <button className="toggle-missing-btn" onClick={() => toggleMissing(groupName)}>
@@ -186,9 +197,9 @@ export default function Collection() {
 
               <div className="collection-grid">
                 {groupItems.map(item => (
-                  <div className="collection-item" key={item.cardId}>
+                  <div className="collection-item" key={item.cardId} onClick={() => setSelectedCardId(item.cardId)}>
                     <div className="thumb">
-                      <img src={item.card?.card_images?.[0]?.image_url_small || 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'} alt={item.card?.name || item.cardId} />
+                      <img src={item.card?.card_images?.[0]?.image_url_small || appLogo} alt={item.card?.name || item.cardId} />
                     </div>
                     <div className="meta">
                       <div className="name">{item.card?.name || `#${item.cardId}`}</div>
@@ -201,38 +212,39 @@ export default function Collection() {
                     </div>
                   </div>
                 ))}
+
+                {sortMode === 'set' && expandedMissing[groupName] && missingBySet[groupName] && !missingLoading && missingBySet[groupName].missing.map(card => (
+                  <div className="collection-item collection-item--missing" key={`missing-${card.id}`} onClick={() => setSelectedCardId(card.id)}>
+                    <div className="thumb">
+                      <img src={card.card_images?.[0]?.image_url_small || 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'} alt={card.name} />
+                    </div>
+                    <div className="meta">
+                      <div className="name">{card.name}</div>
+                      <div className="set muted">{card.card_sets?.[0]?.set_name || ''}</div>
+                      <div className="missing-card-rarity">{card.card_sets?.[0]?.set_rarity || 'Sem raridade'}</div>
+                    </div>
+                    <button className="btn-add-missing" onClick={(e) => { e.stopPropagation(); addMissingCard(card.id); }}>+</button>
+                  </div>
+                ))}
               </div>
 
-              {sortMode === 'set' && expandedMissing[groupName] && (
-                <div className="missing-set-block">
-                  {missingLoading ? (
-                    <div className="missing-loading">Carregando cartas faltantes...</div>
-                  ) : (
-                    <>
-                      <div className="missing-summary">
-                        <span>{missingBySet[groupName].ownedCount} cartas em coleção</span>
-                        <span>{missingBySet[groupName].missing.length} faltantes</span>
-                        <span>{missingBySet[groupName].totalCount} totais no set</span>
-                      </div>
-                      {missingBySet[groupName].missing.length === 0 ? (
-                        <div className="missing-empty">Parabéns! Você já possui todas as cartas desse set.</div>
-                      ) : (
-                        <div className="missing-grid">
-                          {missingBySet[groupName].missing.map(card => (
-                            <div className="missing-card-item" key={card.id}>
-                              <div className="missing-card-name">{card.name}</div>
-                              <div className="missing-card-rarity">{card.card_sets?.[0]?.set_rarity || 'Sem raridade'}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
+              {sortMode === 'set' && expandedMissing[groupName] && missingLoading && (
+                <div className="missing-loading">Carregando cartas faltantes...</div>
+              )}
+
+              {sortMode === 'set' && expandedMissing[groupName] && !missingLoading && missingBySet[groupName] && missingBySet[groupName].missing.length === 0 && (
+                <div className="missing-empty">Parabéns! Você já possui todas as cartas desse set.</div>
               )}
             </div>
           ))}
         </div>
+      )}
+
+      {selectedCardId && (
+        <CardDetailModal
+          cardId={selectedCardId}
+          onClose={() => setSelectedCardId(null)}
+        />
       )}
     </div>
   );
