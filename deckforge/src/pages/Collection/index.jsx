@@ -203,7 +203,7 @@ export default function Collection() {
                     </div>
                     <div className="meta">
                       <div className="name">{item.card?.name || `#${item.cardId}`}</div>
-                      <div className="set muted">{(item.card?.card_sets?.[0]?.set_name) || ''}</div>
+                      <div className="set muted">{(item.card && item.setCode ? item.card.card_sets?.find(set => set.set_code === item.setCode)?.set_name : item.card?.card_sets?.[0]?.set_name) || ''}</div>
                     </div>
                     <div className="qty-controls">
                       <button onClick={() => changeQty(item.cardId, Math.max(0, item.quantity - 1))}>−</button>

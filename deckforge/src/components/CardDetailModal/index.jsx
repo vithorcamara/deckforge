@@ -7,6 +7,7 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [collectionQty, setCollectionQty] = useState(0);
+  const [selectedSetCode, setSelectedSetCode] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
     getCardById(cardId)
       .then(async data => {
         setCard(data);
+        setSelectedSetCode('');
         const saved = await getCollectionItem(cardId);
         setCollectionQty(saved?.quantity || 0);
         setLoading(false);
@@ -110,7 +112,11 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                 <button
                   className="btn-primary"
                   onClick={async () => {
-                    const updated = await addCardToCollection(card.id, 1);
+                    if (!selectedSetCode) {
+                      alert('Selecione um código de carta antes de adicionar à coleção.');
+                      return;
+                    }
+                    const updated = await addCardToCollection(card.id, 1, selectedSetCode);
                     setCollectionQty(updated?.quantity || 0);
                     setStatusMessage('Carta adicionada à coleção!');
                   }}
@@ -151,6 +157,9 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                   <div className="modal-sets-title">
                     Available Sets ({card.card_sets.length})
                   </div>
+                  <div className="modal-selected-set">
+                    Selecionado: {selectedSetCode || 'Nenhum'}
+                  </div>
                   <div className="modal-sets-table-wrapper">
                     <table className="modal-sets-table">
                       <thead>
@@ -162,12 +171,24 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                       </thead>
                       <tbody>
                         {card.card_sets.map((set, idx) => (
-                          <tr key={idx}>
-                            <td 
-                              className={`set-name ${onSelectSet ? 'clickable' : ''}`}
-                              onClick={() => onSelectSet && onSelectSet(set.set_name)}
-                            >
-                              {set.set_name}
+                          <tr
+                            key={idx}
+                            className={selectedSetCode === set.set_code ? 'selected-set-row' : ''}
+                            onClick={() => {
+                              setSelectedSetCode(set.set_code);
+                              console.log(`Selected set code: ${set.set_code}`);
+                            }}
+                          >
+                            <td className={`set-name ${onSelectSet ? 'clickable' : ''}`}>
+                              <label className="set-select-label">
+                                <input
+                                  type="radio"
+                                  name="selectedSetCode"
+                                  checked={selectedSetCode === set.set_code}
+                                  onChange={() => setSelectedSetCode(set.set_code)}
+                                />
+                                <span onClick={() => onSelectSet && onSelectSet(set.set_name)}>{set.set_name}</span>
+                              </label>
                             </td>
                             <td className="set-code">{set.set_code}</td>
                             <td className="set-rarity">{set.set_rarity}</td>

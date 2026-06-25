@@ -10,3 +10,7 @@ db.version(3).stores({
   decks: 'id, name',
   collection: 'cardId, quantity'
 });
+
+db.version(4).stores({
+  collection: 'cardId, quantity, setCode'
+});

@@ -94,12 +94,13 @@ async function loadSearchIndex() {
     archetype: c.archetype,
     // Store sets list for local filtering
     sets: c.card_sets?.map(s => s.set_name) || [],
+    setCodes: c.card_sets?.map(s => s.set_code) || [],
     rarities: c.card_sets?.map(s => s.set_rarity).filter(Boolean) || [],
     // Store small image url for direct usage in catalog
     image_url_small: c.card_images?.[0]?.image_url_small || '',
     image_url: c.card_images?.[0]?.image_url || '',
     // Quick search text representation
-    searchText: `${c.name.toLowerCase()} ${c.desc?.toLowerCase() || ''} ${c.archetype?.toLowerCase() || ''}`
+    searchText: `${c.name.toLowerCase()} ${c.desc?.toLowerCase() || ''} ${c.archetype?.toLowerCase() || ''} ${c.card_sets?.map(s => s.set_code.toLowerCase()).join(' ') || ''}`
   }));
 
   // Extract unique archetypes, sets and rarities
