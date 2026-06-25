@@ -3,7 +3,7 @@
 .catalog-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .filters-panel {
@@ -12,6 +12,38 @@
   flex-direction: column;
   gap: 1.25rem;
   border: 1px solid var(--glass-border);
+}
+
+.top-search-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.search-only-group {
+  min-width: 0;
+}
+
+.filters-toggle-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filters-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: 0.65rem 1rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filters-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-primary);
 }
 
 .filters-row-primary {
@@ -87,7 +119,6 @@
   align-items: center;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 1rem;
-  margin-top: 0.25rem;
 }
 
 .results-count {

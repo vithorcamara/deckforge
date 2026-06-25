@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { searchCards, getArchetypes, getCardSets } from '../../services/cardService';
+import { searchCards, getArchetypes, getCardSets, getRarities } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
 import appLogo from '/favicon.png';
 import './style.css';
@@ -23,10 +23,13 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
   const [attribute, setAttribute] = useState('');
   const [race, setRace] = useState('');
   const [archetype, setArchetype] = useState('');
+  const [rarity, setRarity] = useState('');
   const [archetypes, setArchetypes] = useState([]);
+  const [rarities, setRarities] = useState([]);
   
   const [selectedSet, setSelectedSet] = useState(initialSet || '');
   const [sets, setSets] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
   
   const [cards, setCards] = useState([]);
   const [page, setPage] = useState(1);
@@ -34,10 +37,11 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
   const [hasMore, setHasMore] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
 
-  // Fetch archetypes and sets list on load
+  // Fetch archetypes, sets and rarities list on load
   useEffect(() => {
     setArchetypes(getArchetypes());
     setSets(getCardSets());
+    setRarities(getRarities());
   }, []);
 
   // Sync initial set if changed from outside
@@ -56,6 +60,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
       attribute,
       race,
       archetype,
+      rarity,
       set: selectedSet,
       page: 1,
       limit: 30
@@ -63,7 +68,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
     setCards(result.cards);
     setTotal(result.total);
     setHasMore(result.hasMore);
-  }, [query, type, attribute, race, archetype, selectedSet]);
+  }, [query, type, attribute, race, archetype, rarity, selectedSet]);
 
   // Load more pages
   const handleLoadMore = () => {
@@ -74,6 +79,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
       attribute,
       race,
       archetype,
+      rarity,
       set: selectedSet,
       page: nextPage,
       limit: 30
@@ -90,6 +96,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
     setAttribute('');
     setRace('');
     setArchetype('');
+    setRarity('');
     setSelectedSet('');
     if (onClearInitialSet) onClearInitialSet();
   };
@@ -116,38 +123,58 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
   return (
     <div className="catalog-container">
       
-      {/* Search & Filters Panel */}
-      <div className="glass-card filters-panel">
-        
-        {/* Row 1: Search & Type */}
-        <div className="filters-row-primary">
-          {/* Text Search */}
-          <div className="filter-group">
-            <label>Search Name / Description</label>
-            <input 
-              type="text" 
-              placeholder="Ex: Dark Magician, Blue-Eyes, Ash..." 
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              className="filter-input"
-            />
-          </div>
-
-          {/* Card Type Filter */}
-          <div className="filter-group">
-            <label>Card Type</label>
-            <select 
-              value={type}
-              onChange={e => { setType(e.target.value); setRace(''); setAttribute(''); }}
-              className="filter-select"
-            >
-              <option value="">All</option>
-              <option value="Monster">Monster</option>
-              <option value="Spell">Spell Card</option>
-              <option value="Trap">Trap Card</option>
-            </select>
-          </div>
+      <div className="top-search-row">
+        <div className="filter-group search-only-group">
+          <label>Search Name / Description</label>
+          <input 
+            type="text" 
+            placeholder="Ex: Dark Magician, Blue-Eyes, Ash..." 
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            className="filter-input"
+          />
         </div>
+
+        <button
+          className="filters-toggle-btn"
+          onClick={() => setShowFilters(prev => !prev)}
+        >
+          {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+        </button>
+      </div>
+      {/* Info & Reset Button */}
+      <div className="filters-summary-footer">
+        <span className="results-count">
+          Cards found: <strong>{total}</strong>
+        </span>
+        {(query || type || attribute || race || archetype || rarity || selectedSet) && (
+          <button onClick={handleResetFilters} className="clear-filters-btn">
+            🧹 Clear Filters
+          </button>
+        )}
+      </div>
+
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="glass-card filters-panel">
+          
+          {/* Row 1: Type */}
+          <div className="filters-row-primary">
+            {/* Card Type Filter */}
+            <div className="filter-group">
+              <label>Card Type</label>
+              <select 
+                value={type}
+                onChange={e => { setType(e.target.value); setRace(''); setAttribute(''); }}
+                className="filter-select"
+              >
+                <option value="">All</option>
+                <option value="Monster">Monster</option>
+                <option value="Spell">Spell Card</option>
+                <option value="Trap">Trap Card</option>
+              </select>
+            </div>
+          </div>
 
         {/* Row 2: Secondary Filters */}
         <div className="filters-row-secondary">
@@ -207,18 +234,22 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
           </div>
         </div>
 
-        {/* Info & Reset Button */}
-        <div className="filters-summary-footer">
-          <span className="results-count">
-            Cards found: <strong>{total}</strong>
-          </span>
-          {(query || type || attribute || race || archetype || selectedSet) && (
-            <button onClick={handleResetFilters} className="clear-filters-btn">
-              🧹 Clear Filters
-            </button>
-          )}
+        {/* Row 3: Rarity */}
+        <div className="filters-row-secondary">
+          <div className="filter-group">
+            <label>Rarity</label>
+            <select
+              value={rarity}
+              onChange={e => setRarity(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">All</option>
+              {rarities.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
         </div>
       </div>
+      )}
 
       {/* Cards Grid */}
       {cards.length === 0 ? (

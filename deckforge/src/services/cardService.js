@@ -4,6 +4,7 @@ import { db } from './db';
 let cardSearchIndex = [];
 let cachedArchetypes = [];
 let cachedSets = [];
+let cachedRarities = [];
 
 /**
  * Checks if the local database is up to date and syncs it with YGOPRODeck API.
@@ -93,6 +94,7 @@ async function loadSearchIndex() {
     archetype: c.archetype,
     // Store sets list for local filtering
     sets: c.card_sets?.map(s => s.set_name) || [],
+    rarities: c.card_sets?.map(s => s.set_rarity).filter(Boolean) || [],
     // Store small image url for direct usage in catalog
     image_url_small: c.card_images?.[0]?.image_url_small || '',
     image_url: c.card_images?.[0]?.image_url || '',
@@ -100,21 +102,24 @@ async function loadSearchIndex() {
     searchText: `${c.name.toLowerCase()} ${c.desc?.toLowerCase() || ''} ${c.archetype?.toLowerCase() || ''}`
   }));
 
-  // Extract unique archetypes & sets
+  // Extract unique archetypes, sets and rarities
   const archetypesSet = new Set();
   const setsSet = new Set();
+  const raritiesSet = new Set();
   
   cards.forEach(c => {
     if (c.archetype) archetypesSet.add(c.archetype);
     if (c.card_sets) {
       c.card_sets.forEach(s => {
         if (s.set_name) setsSet.add(s.set_name);
+        if (s.set_rarity) raritiesSet.add(s.set_rarity);
       });
     }
   });
   
   cachedArchetypes = Array.from(archetypesSet).sort();
   cachedSets = Array.from(setsSet).sort();
+  cachedRarities = Array.from(raritiesSet).sort();
 }
 
 /**
@@ -131,12 +136,16 @@ export function getCardSets() {
   return cachedSets;
 }
 
+export function getRarities() {
+  return cachedRarities;
+}
+
 /**
  * Searches cards using the in-memory index.
  * @param {object} params - Search filters.
  * @returns {Array} List of matched cards.
  */
-export function searchCards({ query = '', type = '', attribute = '', race = '', archetype = '', set = '', limit = 40, page = 1 }) {
+export function searchCards({ query = '', type = '', attribute = '', race = '', archetype = '', set = '', rarity = '', limit = 40, page = 1 }) {
   let results = cardSearchIndex;
 
   // Text search
@@ -169,6 +178,11 @@ export function searchCards({ query = '', type = '', attribute = '', race = '', 
   // Archetype filter
   if (archetype) {
     results = results.filter(c => c.archetype === archetype);
+  }
+
+  // Rarity filter
+  if (rarity) {
+    results = results.filter(c => c.rarities.includes(rarity));
   }
 
   // Set filter
