@@ -12,5 +12,6 @@ db.version(3).stores({
 });
 
 db.version(4).stores({
-  collection: 'cardId, quantity, setCode'
+  collection: 'cardId, quantity, setCode',
+  binders: 'id, name, rows, cols, pageCount, updatedAt'
 });

@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import Builder from './pages/Builder';
 import Collection from './pages/Collection';
+import Binder from './pages/Binder';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -130,7 +131,9 @@ function App() {
         zIndex: 100,
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
-        backgroundColor: 'rgba(20, 22, 29, 0.8)'
+        backgroundColor: 'rgba(20, 22, 29, 0.8)',
+        maxWidth: '100%',
+        overflowX: 'hidden'
       }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* Brand/Logo */}
@@ -184,6 +187,19 @@ function App() {
               🧱 Deck Builder
             </button>
             <button 
+              className={`btn-secondary ${activeTab === 'binder' ? 'active' : ''}`}
+              onClick={() => setActiveTab('binder')}
+              style={{
+                padding: '0.5rem 0.9rem',
+                fontSize: '0.85rem',
+                borderColor: activeTab === 'binder' ? 'var(--color-primary)' : 'transparent',
+                backgroundColor: activeTab === 'binder' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
+                color: activeTab === 'binder' ? 'var(--color-primary)' : 'var(--text-secondary)'
+              }}
+            >
+              📎 Binder
+            </button>
+            <button 
               className={`btn-secondary ${activeTab === 'collection' ? 'active' : ''}`}
               onClick={() => setActiveTab('collection')}
               style={{
@@ -216,6 +232,8 @@ function App() {
           )}
           
           {activeTab === 'builder' && <Builder />}
+
+          {activeTab === 'binder' && <Binder />}
 
           {activeTab === 'collection' && <Collection />}
         </div>

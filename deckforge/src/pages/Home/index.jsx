@@ -53,6 +53,17 @@ export default function Home({ onNavigate }) {
             Cadastre suas cartas e compare listas de decks prontas com a sua coleção local. Identifique instantaneamente cartas faltantes e encontre sugestões de substituições.
           </p>
         </div>
+
+        {/* Binder Card */}
+        <div className="glass-card feature-card" onClick={() => onNavigate('binder')}>
+          <div className="feature-icon-wrapper icon-gold">
+            📎
+          </div>
+          <h3>Binder Virtual</h3>
+          <p>
+            Organize sua coleção por set, veja as cartas que faltam nos sets que você já possui e planeje onde encaixar novas adições.
+          </p>
+        </div>
       </section>
     </div>
   );
