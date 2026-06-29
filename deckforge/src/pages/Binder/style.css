@@ -20,6 +20,7 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 1rem;
+  transition: grid-template-columns 0.3s ease;
 }
 
 .binder-sidebar,
@@ -33,10 +34,34 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  transition: padding 0.3s ease;
 }
 
-.binder-sidebar h3 {
-  margin: 0 0 0.75rem;
+.binder-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.btn-collapse-sidebar {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-collapse-sidebar:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-primary);
 }
 
 .binder-page-button {
@@ -216,6 +241,7 @@
 }
 
 .binder-slot {
+  position: relative;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   min-height: 130px;
@@ -229,6 +255,7 @@
   text-align: center;
   cursor: pointer;
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  overflow: hidden;
 }
 
 .binder-slot:hover {
@@ -250,6 +277,34 @@
   background: rgba(231, 29, 54, 0.1);
 }
 
+.binder-slot.missing-slot img {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.binder-slot.missing-slot:hover img {
+  filter: grayscale(40%);
+  opacity: 0.9;
+}
+
+.slot-missing-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(231, 29, 54, 0.9);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
 .binder-slot img {
   width: 100%;
   max-width: 100px;
@@ -265,32 +320,6 @@
 .binder-slot small {
   color: var(--text-secondary);
   font-size: 0.8rem;
-}
-
-.binder-slot.selected {
-  border-color: var(--color-primary);
-  background: rgba(223, 177, 91, 0.08);
-}
-
-.binder-slot.empty-slot {
-  opacity: 0.7;
-}
-
-.binder-slot.missing-slot {
-  border-color: rgba(231, 29, 54, 0.25);
-  background: rgba(231, 29, 54, 0.08);
-}
-
-.binder-slot img {
-  width: 100%;
-  max-width: 100px;
-  height: 140px;
-  object-fit: cover;
-}
-
-.binder-slot span {
-  display: block;
-  font-size: 0.85rem;
 }
 
 .binder-search-panel {

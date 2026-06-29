@@ -27,6 +27,7 @@ function getMaxBinderCopies(collectionQty) {
 
 export default function Binder() {
   const [binders, setBinders] = useState([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [selectedBinderId, setSelectedBinderId] = useState(null);
   const [currentBinder, setCurrentBinder] = useState(null);
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
@@ -281,65 +282,79 @@ export default function Binder() {
         </div>
       </div>
 
-      <div className="binder-main-grid">
-        <aside className="binder-sidebar glass-card">
-          <h3>Binders</h3>
-          {binders.length === 0 ? (
-            <div className="empty-sidebar">Nenhum Binder ainda. Crie um para começar.</div>
-          ) : (
-            binders.map((binder) => (
-              <button
-                key={binder.id}
-                className={`binder-page-button ${binder.id === selectedBinderId ? 'active' : ''}`}
-                onClick={() => openBinder(binder)}
-              >
-                <strong>{binder.name}</strong>
-                <span>{binder.rows}x{binder.cols} · {binder.pageCount} pág.</span>
-              </button>
-            ))
-          )}
-
-          <div className="binder-import-section">
-            <label className="file-label">
-              Importar Binder
-              <input type="file" accept="application/json" onChange={handleImportBinder} />
-            </label>
-            {importError && <div className="import-error">{importError}</div>}
-          </div>
-
-          <div className="binder-create-config">
-            <h4>Criar novo Binder</h4>
-            <label>
-              Nome
-              <input value={createName} onChange={(e) => setCreateName(e.target.value)} />
-            </label>
-            <label>
-              Linhas
-              <select value={createRows} onChange={(e) => setCreateRows(Number(e.target.value))}>
-                {[2, 3, 4].map((r) => <option key={r} value={r}>{r}</option>)}
-              </select>
-            </label>
-            <label>
-              Colunas
-              <select value={createCols} onChange={(e) => setCreateCols(Number(e.target.value))}>
-                {[2, 3, 4].map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </label>
-            <label>
-              Folhas
-              <input
-                type="number"
-                min={1}
-                max={999}
-                step={1}
-                value={createPageCount}
-                onChange={(e) => setCreatePageCount(Number(e.target.value))}
-              />
-            </label>
-            <button className="btn-primary" onClick={startCreateBinder}>
-              + Novo Binder
+      <div className={`binder-main-grid`}>
+        <aside className={`binder-sidebar glass-card`}>
+          <div className="binder-sidebar-header">
+            <h3>Binders</h3>
+            <button
+              type="button"
+              className="btn-collapse-sidebar"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              title={isSidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}
+            >
+              {isSidebarCollapsed ? '▼' : '▲'}
             </button>
           </div>
+          {!isSidebarCollapsed && (
+            <>
+              {binders.length === 0 ? (
+                <div className="empty-sidebar">Nenhum Binder ainda. Crie um para começar.</div>
+              ) : (
+                binders.map((binder) => (
+                  <button
+                    key={binder.id}
+                    className={`binder-page-button ${binder.id === selectedBinderId ? 'active' : ''}`}
+                    onClick={() => openBinder(binder)}
+                  >
+                    <strong>{binder.name}</strong>
+                    <span>{binder.rows}x{binder.cols} · {binder.pageCount} pág.</span>
+                  </button>
+                ))
+              )}
+
+              <div className="binder-import-section">
+                <label className="file-label">
+                  Importar Binder
+                  <input type="file" accept="application/json" onChange={handleImportBinder} />
+                </label>
+                {importError && <div className="import-error">{importError}</div>}
+              </div>
+
+              <div className="binder-create-config">
+                <h4>Criar novo Binder</h4>
+                <label>
+                  Nome
+                  <input value={createName} onChange={(e) => setCreateName(e.target.value)} />
+                </label>
+                <label>
+                  Linhas
+                  <select value={createRows} onChange={(e) => setCreateRows(Number(e.target.value))}>
+                    {[2, 3, 4].map((r) => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </label>
+                <label>
+                  Colunas
+                  <select value={createCols} onChange={(e) => setCreateCols(Number(e.target.value))}>
+                    {[2, 3, 4].map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </label>
+                <label>
+                  Folhas
+                  <input
+                    type="number"
+                    min={1}
+                    max={999}
+                    step={1}
+                    value={createPageCount}
+                    onChange={(e) => setCreatePageCount(Number(e.target.value))}
+                  />
+                </label>
+                <button className="btn-primary" onClick={startCreateBinder}>
+                  + Novo Binder
+                </button>
+              </div>
+            </>
+          )}
         </aside>
 
         <section className="binder-editor">
