@@ -279,9 +279,6 @@ export default function Binder() {
             Crie Binder com páginas fixas, configure a matriz ao criar e use apenas cartas da coleção ou com sets em comum.
           </p>
         </div>
-        <button className="btn-primary" onClick={startCreateBinder}>
-          + Novo Binder
-        </button>
       </div>
 
       <div className="binder-main-grid">
@@ -339,6 +336,9 @@ export default function Binder() {
                 onChange={(e) => setCreatePageCount(Number(e.target.value))}
               />
             </label>
+            <button className="btn-primary" onClick={startCreateBinder}>
+              + Novo Binder
+            </button>
           </div>
         </aside>
 
@@ -356,7 +356,6 @@ export default function Binder() {
               <div className="binder-editor-header">
                 <div className="binder-editor-meta">
                   <label>
-                    Nome do Binder
                     <input
                       type="text"
                       value={currentBinder.name}
@@ -376,13 +375,13 @@ export default function Binder() {
 
                 <div className="binder-editor-actions">
                   <button className="btn-secondary" onClick={handleExportBinder} disabled={!currentBinder}>
-                    Exportar JSON
+                    Exportar
                   </button>
                   <button className="btn-danger" onClick={handleDeleteBinder} disabled={!selectedBinderId}>
-                    Excluir Binder
+                    Excluir
                   </button>
                   <button className="btn-primary" onClick={handleSaveBinder} disabled={!hasChanges}>
-                    Salvar Binder
+                    Salvar
                   </button>
                 </div>
               </div>
@@ -405,8 +404,7 @@ export default function Binder() {
               <div className="binder-editor-body">
                 <div className="binder-grid-panel">
                   <div className="binder-grid-header">
-                    <strong>Página {selectedPageIndex + 1}</strong>
-                    <span>Slots</span>
+                    <strong>Página - {selectedPageIndex + 1}</strong>
                   </div>
 
                   <div
@@ -426,8 +424,6 @@ export default function Binder() {
                           {card ? (
                             <>
                               <img src={card.card_images?.[0]?.image_url_small || appLogo} alt={card.name} />
-                              <span>{card.name}</span>
-                              <small>{ownedQty > 0 ? `Coleção: ${ownedQty}` : 'Faltando'}</small>
                             </>
                           ) : (
                             <span>+</span>

@@ -43,7 +43,7 @@
   width: 100%;
   text-align: left;
   border: 1px solid var(--border-color);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
   border-radius: 10px;
   padding: 0.9rem 1rem;
@@ -83,7 +83,7 @@
   border-radius: 10px;
   padding: 0.75rem 1rem;
   cursor: pointer;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .file-label input {
@@ -101,7 +101,7 @@
   padding: 0.95rem;
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .binder-create-config h4 {
@@ -169,7 +169,7 @@
 
 .grid-option {
   border: 1px solid var(--border-color);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
   padding: 0.6rem 0.9rem;
   border-radius: 10px;
@@ -201,7 +201,7 @@
   padding: 1rem;
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .binder-grid-header {
@@ -217,10 +217,9 @@
 
 .binder-slot {
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 8px;
   min-height: 130px;
-  padding: 0.85rem;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
@@ -256,7 +255,6 @@
   max-width: 100px;
   height: 140px;
   object-fit: cover;
-  border-radius: 12px;
 }
 
 .binder-slot span {
@@ -288,7 +286,6 @@
   max-width: 100px;
   height: 140px;
   object-fit: cover;
-  border-radius: 8px;
 }
 
 .binder-slot span {
@@ -312,7 +309,7 @@
   padding: 1rem;
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -326,14 +323,24 @@
 
 .binder-pages-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  max-width: 80vw;
   gap: 0.6rem;
   padding: 0 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.binder-pages-tabs::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari e Edge */
 }
 
 .page-tab {
   border: 1px solid var(--border-color);
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-primary);
   padding: 0.75rem 0.95rem;
   border-radius: 999px;
@@ -384,7 +391,7 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 0.75rem;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .search-card-row button {
@@ -454,7 +461,7 @@
 }
 
 .btn-secondary {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
@@ -475,6 +482,7 @@
 }
 
 @media (max-width: 700px) {
+
   .binder-header,
   .binder-editor-header {
     flex-direction: column;
@@ -485,4 +493,10 @@
   .binder-editor-meta input[type="text"] {
     width: 100%;
   }
+
+  .binder-pages-tabs {
+    max-width: 90vw;
+  }
+
+
 }
