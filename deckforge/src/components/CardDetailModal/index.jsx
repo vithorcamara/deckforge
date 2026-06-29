@@ -32,8 +32,8 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      
-      <div 
+
+      <div
         className="glass-card modal-content"
         onClick={e => e.stopPropagation()}
       >
@@ -50,48 +50,35 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
           <>
             {/* Left: Card Image & Prices */}
             <div className="modal-left-col">
-              <img 
-                src={card.card_images?.[0]?.image_url || card.card_images?.[0]?.image_url_small} 
+              <img
+                src={card.card_images?.[0]?.image_url || card.card_images?.[0]?.image_url_small}
                 alt={card.name}
                 className="modal-card-image"
               />
-              {card.card_prices?.[0] && (
-                <div className="modal-prices-box">
-                  <div className="modal-prices-title">Average Prices (USD)</div>
-                  <div className="modal-prices-grid">
-                    <div>Cardmarket: <span>${card.card_prices[0].cardmarket_price}</span></div>
-                    <div>TCGPlayer: <span>${card.card_prices[0].tcgplayer_price}</span></div>
-                    <div>eBay: <span>${card.card_prices[0].ebay_price}</span></div>
-                    <div>Amazon: <span>${card.card_prices[0].amazon_price}</span></div>
-                  </div>
-                </div>
-              )}
+
             </div>
 
             {/* Right: Card Details */}
             <div className="modal-right-col">
-              <div>
-                <h2 className="modal-card-title">{card.name}</h2>
-                {card.archetype && (
-                  <div className="modal-card-archetype">
-                    Archetype: {card.archetype}
-                  </div>
-                )}
-              </div>
+              <h2 className="modal-card-title">{card.name}</h2>
 
               {/* Badges Info */}
               <div className="modal-badges-row">
-                <span className={`modal-badge ${
-                  card.type.includes('Spell') ? 'badge-spell' : 
-                  card.type.includes('Trap') ? 'badge-trap' : 
-                  'badge-monster'
-                }`}>
+                {card.archetype && (
+                  <div className="modal-card-archetype">
+                    {card.archetype}
+                  </div>
+                )}
+                <span className={`modal-badge ${card.type.includes('Spell') ? 'badge-spell' :
+                  card.type.includes('Trap') ? 'badge-trap' :
+                    'badge-monster'
+                  }`}>
                   {card.type}
                 </span>
 
                 {card.attribute && (
                   <span className="modal-badge">
-                    Attribute: {card.attribute}
+                    {card.attribute}
                   </span>
                 )}
 
@@ -100,10 +87,10 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                     {card.type.includes('XYZ') ? 'Rank' : 'Level'}: {card.level} ★
                   </span>
                 )}
-                
+
                 {card.race && (
                   <span className="modal-badge">
-                    Type: {card.race}
+                    {card.race}
                   </span>
                 )}
               </div>
@@ -131,24 +118,6 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                 {statusMessage && (
                   <div className="modal-collection-status">{statusMessage}</div>
                 )}
-              </div>
-
-              {/* Monster Stats */}
-              {(card.atk !== undefined || card.def !== undefined) && (
-                <div className="modal-stats-box">
-                  {card.atk !== undefined && (
-                    <div>ATK: <span>{card.atk === -1 ? '?' : card.atk}</span></div>
-                  )}
-                  {card.def !== undefined && (
-                    <div>DEF: <span>{card.def === -1 ? '?' : card.def}</span></div>
-                  )}
-                </div>
-              )}
-
-              {/* Description */}
-              <div className="modal-desc-section">
-                <div className="modal-desc-title">Description / Effect</div>
-                <div className="modal-desc-body">{card.desc}</div>
               </div>
 
               {/* Card Sets Table */}
@@ -196,6 +165,37 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Monster Stats */}
+              {(card.atk !== undefined || card.def !== undefined) && (
+                <div className="modal-stats-box">
+                  {card.atk !== undefined && (
+                    <div>ATK: <span>{card.atk === -1 ? '?' : card.atk}</span></div>
+                  )}
+                  {card.def !== undefined && (
+                    <div>DEF: <span>{card.def === -1 ? '?' : card.def}</span></div>
+                  )}
+                </div>
+              )}
+
+              {/* Description */}
+              <div className="modal-desc-section">
+                <div className="modal-desc-title">Description / Effect</div>
+                <div className="modal-desc-body">{card.desc}</div>
+              </div>
+
+              {/* Card Prices */}
+              {card.card_prices?.[0] && (
+                <div className="modal-prices-box">
+                  <div className="modal-prices-title">Average Prices (USD)</div>
+                  <div className="modal-prices-grid">
+                    <div>Cardmarket: <span>${card.card_prices[0].cardmarket_price}</span></div>
+                    <div>TCGPlayer: <span>${card.card_prices[0].tcgplayer_price}</span></div>
+                    <div>eBay: <span>${card.card_prices[0].ebay_price}</span></div>
+                    <div>Amazon: <span>${card.card_prices[0].amazon_price}</span></div>
                   </div>
                 </div>
               )}

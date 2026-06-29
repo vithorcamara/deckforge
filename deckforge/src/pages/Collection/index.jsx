@@ -57,7 +57,7 @@ export default function Collection() {
   useEffect(() => {
     loadCollection();
     // No persistent hooks added here to keep behavior simple and stable
-    return () => {};
+    return () => { };
   }, []);
 
   const changeQty = async (cardId, newQty) => {
@@ -164,7 +164,7 @@ export default function Collection() {
               ))}
             </select>
           </div>
-          <button className="btn-danger" onClick={clearCollectionItems} disabled={loading || items.length===0}>Limpar Coleção</button>
+          <button className="btn-danger" onClick={clearCollectionItems} disabled={loading || items.length === 0}>Limpar Coleção</button>
         </div>
       </div>
 
@@ -201,10 +201,6 @@ export default function Collection() {
                     <div className="thumb">
                       <img src={item.card?.card_images?.[0]?.image_url_small || appLogo} alt={item.card?.name || item.cardId} />
                     </div>
-                    <div className="meta">
-                      <div className="name">{item.card?.name || `#${item.cardId}`}</div>
-                      <div className="set muted">{(item.card && item.setCode ? item.card.card_sets?.find(set => set.set_code === item.setCode)?.set_name : item.card?.card_sets?.[0]?.set_name) || ''}</div>
-                    </div>
                     <div className="qty-controls">
                       <button onClick={() => changeQty(item.cardId, Math.max(0, item.quantity - 1))}>−</button>
                       <span className="qty">{item.quantity}</span>
@@ -217,11 +213,6 @@ export default function Collection() {
                   <div className="collection-item collection-item--missing" key={`missing-${card.id}`} onClick={() => setSelectedCardId(card.id)}>
                     <div className="thumb">
                       <img src={card.card_images?.[0]?.image_url_small || 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'} alt={card.name} />
-                    </div>
-                    <div className="meta">
-                      <div className="name">{card.name}</div>
-                      <div className="set muted">{card.card_sets?.[0]?.set_name || ''}</div>
-                      <div className="missing-card-rarity">{card.card_sets?.[0]?.set_rarity || 'Sem raridade'}</div>
                     </div>
                     <button className="btn-add-missing" onClick={(e) => { e.stopPropagation(); addMissingCard(card.id); }}>+</button>
                   </div>
