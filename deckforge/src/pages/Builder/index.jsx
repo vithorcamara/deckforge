@@ -398,7 +398,14 @@ export default function Builder() {
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   {hasChanges ? '• Alterações pendentes' : '• Salvo no navegador'}
                 </span>
+                <div className="deck-summary-counts">
+                  <span style={{ fontWeight: 700 }}>Resumo do Deck</span>
+                  <span>Main: <strong>{resolvedCards.filter(rc => rc.type === 'main').reduce((sum, rc) => sum + rc.quantity, 0)}/60</strong></span>
+                  <span>Extra: <strong>{resolvedCards.filter(rc => rc.type === 'extra').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
+                  <span>Side: <strong>{resolvedCards.filter(rc => rc.type === 'side').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
+                </div>
               </div>
+
             </div>
 
             <div className="workspace-actions">
@@ -492,15 +499,6 @@ export default function Builder() {
 
             {/* Right side: Current Deck Lists */}
             <div className="deck-structure-panel">
-              {/* Quantities summary bar */}
-              <div className="deck-summary-header">
-                <span style={{ fontWeight: 700 }}>Resumo do Deck</span>
-                <div className="deck-summary-counts">
-                  <span>Main: <strong>{resolvedCards.filter(rc => rc.type === 'main').reduce((sum, rc) => sum + rc.quantity, 0)}/60</strong></span>
-                  <span>Extra: <strong>{resolvedCards.filter(rc => rc.type === 'extra').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
-                  <span>Side: <strong>{resolvedCards.filter(rc => rc.type === 'side').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
-                </div>
-              </div>
 
               {/* Validation errors/warnings */}
               {validationAlerts.length > 0 && (
@@ -532,19 +530,11 @@ export default function Builder() {
                             src={getCardImageUrl(rc.cardDetails)}
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
+                            onClick={() => setSelectedDetailCardId(rc.cardId)}
                             onError={e => {
                               e.target.src = appLogo;
                             }}
                           />
-                          <div className="deck-item-info">
-                            <span
-                              className="deck-item-name"
-                              onClick={() => setSelectedDetailCardId(rc.cardId)}
-                            >
-                              {rc.cardDetails.name}
-                            </span>
-                            <span className="deck-item-type">{rc.cardDetails.type}</span>
-                          </div>
                           <div className="deck-item-controls">
                             <button className="btn-ctrl" onClick={() => handleUpdateQuantity(rc.cardId, 'main', -1)}>-</button>
                             <span className="deck-item-quantity">{rc.quantity}x</span>
@@ -575,19 +565,11 @@ export default function Builder() {
                             src={getCardImageUrl(rc.cardDetails)}
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
+                            onClick={() => setSelectedDetailCardId(rc.cardId)}
                             onError={e => {
                               e.target.src = appLogo;
                             }}
                           />
-                          <div className="deck-item-info">
-                            <span
-                              className="deck-item-name"
-                              onClick={() => setSelectedDetailCardId(rc.cardId)}
-                            >
-                              {rc.cardDetails.name}
-                            </span>
-                            <span className="deck-item-type">{rc.cardDetails.type}</span>
-                          </div>
                           <div className="deck-item-controls">
                             <button className="btn-ctrl" onClick={() => handleUpdateQuantity(rc.cardId, 'extra', -1)}>-</button>
                             <span className="deck-item-quantity">{rc.quantity}x</span>
@@ -618,19 +600,11 @@ export default function Builder() {
                             src={getCardImageUrl(rc.cardDetails)}
                             alt={rc.cardDetails.name}
                             className="deck-item-img"
+                            onClick={() => setSelectedDetailCardId(rc.cardId)}
                             onError={e => {
                               e.target.src = appLogo;
                             }}
                           />
-                          <div className="deck-item-info">
-                            <span
-                              className="deck-item-name"
-                              onClick={() => setSelectedDetailCardId(rc.cardId)}
-                            >
-                              {rc.cardDetails.name}
-                            </span>
-                            <span className="deck-item-type">{rc.cardDetails.type}</span>
-                          </div>
                           <div className="deck-item-controls">
                             <button className="btn-ctrl" onClick={() => handleUpdateQuantity(rc.cardId, 'side', -1)}>-</button>
                             <span className="deck-item-quantity">{rc.quantity}x</span>
