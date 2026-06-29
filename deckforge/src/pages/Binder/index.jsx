@@ -130,7 +130,7 @@ export default function Binder() {
   };
 
   const startCreateBinder = () => {
-    const binder = createEmptyBinder(createName.trim() || 'Novo Binder', createRows, createCols, createPageCount);
+    const binder = createEmptyBinder(createName.trim() || 'Novo Binder', createRows, createCols, createPageCount * 2);
     setCurrentBinder(binder);
     setSelectedBinderId(null);
     setSelectedPageIndex(0);
@@ -326,7 +326,7 @@ export default function Binder() {
               </select>
             </label>
             <label>
-              Páginas
+              Folhas
               <input
                 type="number"
                 min={1}
@@ -405,6 +405,9 @@ export default function Binder() {
                 <div className="binder-grid-panel">
                   <div className="binder-grid-header">
                     <strong>Página - {selectedPageIndex + 1}</strong>
+                    <button className="btn-secondary" onClick={handleClearSlot} disabled={!selectedSlotId}>
+                      Limpar slot selecionado
+                    </button>
                   </div>
 
                   <div
@@ -431,11 +434,6 @@ export default function Binder() {
                         </button>
                       );
                     })}
-                  </div>
-                  <div className="slot-actions">
-                    <button className="btn-secondary" onClick={handleClearSlot} disabled={!selectedSlotId}>
-                      Limpar slot selecionado
-                    </button>
                   </div>
                 </div>
 
@@ -477,7 +475,7 @@ export default function Binder() {
                               disabled={!canAdd}
                               onClick={() => handlePlaceCard(card)}
                             >
-                              {canAdd ? 'Adicionar' : 'Máximo atingido'}
+                              {canAdd ? '+' : 'Máx'}
                             </button>
                           </div>
                         );
