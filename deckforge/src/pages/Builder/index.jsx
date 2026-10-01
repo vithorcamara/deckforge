@@ -359,6 +359,34 @@ export default function Builder() {
     }
   };
 
+  const handleExportDeckJSON = () => {
+    if (!editingDeck) return;
+    try {
+      const deckToExport = {
+        ...editingDeck,
+        cards: resolvedCards.map(({ cardId, quantity, type, cardDetails }) => ({
+          cardId,
+          quantity,
+          type,
+          cardDetails
+        }))
+      };
+      const content = JSON.stringify(deckToExport, null, 2);
+      const blob = new Blob([content], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${editingDeck.name}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error exporting deck as JSON:', err);
+    }
+  };
+
   const handleBackToList = () => {
     if (hasChanges) {
       if (!confirm('Existem alterações não salvas. Deseja realmente sair sem salvar?')) {
@@ -414,6 +442,9 @@ export default function Builder() {
               </button>
               <button className="btn-secondary" onClick={handleExportDeck}>
                 📥 YDK
+              </button>
+              <button className="btn-secondary" onClick={handleExportDeckJSON}>
+                📄 JSON
               </button>
               <button className="btn-primary" onClick={handleSaveDeck}>
                 💾 Salvar
