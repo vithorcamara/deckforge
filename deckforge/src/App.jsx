@@ -132,7 +132,7 @@ function App() {
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         backgroundColor: 'rgba(20, 22, 29, 0.8)',
-        maxWidth: '100%',
+        width: '100%',
         overflowX: 'hidden'
       }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -146,71 +146,71 @@ function App() {
           </div>
           
           {/* Navigation Menu */}
-          <nav style={{ display: 'flex', gap: '0.4rem' }}>
+          <nav style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' }}>
             <button 
               className={`btn-secondary ${activeTab === 'home' ? 'active' : ''}`}
               onClick={() => setActiveTab('home')}
               style={{
-                padding: '0.5rem 0.9rem',
+                padding: '0.1rem 0.2rem',
                 fontSize: '0.85rem',
                 borderColor: activeTab === 'home' ? 'var(--color-primary)' : 'transparent',
                 backgroundColor: activeTab === 'home' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
                 color: activeTab === 'home' ? 'var(--color-primary)' : 'var(--text-secondary)'
               }}
             >
-              🏠 Início
+              Início
             </button>
             <button 
               className={`btn-secondary ${activeTab === 'catalog' ? 'active' : ''}`}
               onClick={() => setActiveTab('catalog')}
               style={{
-                padding: '0.5rem 0.9rem',
+                padding: '0.1rem 0.2rem',
                 fontSize: '0.85rem',
                 borderColor: activeTab === 'catalog' ? 'var(--color-primary)' : 'transparent',
                 backgroundColor: activeTab === 'catalog' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
                 color: activeTab === 'catalog' ? 'var(--color-primary)' : 'var(--text-secondary)'
               }}
             >
-              📚 Catálogo
+              Catálogo
             </button>
             <button 
               className={`btn-secondary ${activeTab === 'builder' ? 'active' : ''}`}
               onClick={() => setActiveTab('builder')}
               style={{
-                padding: '0.5rem 0.9rem',
+                padding: '0.1rem 0.2rem',
                 fontSize: '0.85rem',
                 borderColor: activeTab === 'builder' ? 'var(--color-primary)' : 'transparent',
                 backgroundColor: activeTab === 'builder' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
                 color: activeTab === 'builder' ? 'var(--color-primary)' : 'var(--text-secondary)'
               }}
             >
-              🧱 Deck Builder
+              Deck Builder
             </button>
             <button 
               className={`btn-secondary ${activeTab === 'binder' ? 'active' : ''}`}
               onClick={() => setActiveTab('binder')}
               style={{
-                padding: '0.5rem 0.9rem',
+                padding: '0.1rem 0.2rem',
                 fontSize: '0.85rem',
                 borderColor: activeTab === 'binder' ? 'var(--color-primary)' : 'transparent',
                 backgroundColor: activeTab === 'binder' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
                 color: activeTab === 'binder' ? 'var(--color-primary)' : 'var(--text-secondary)'
               }}
             >
-              📎 Binder
+              Binder
             </button>
             <button 
               className={`btn-secondary ${activeTab === 'collection' ? 'active' : ''}`}
               onClick={() => setActiveTab('collection')}
               style={{
-                padding: '0.5rem 0.9rem',
+                padding: '0.1rem 0.2rem',
                 fontSize: '0.85rem',
                 borderColor: activeTab === 'collection' ? 'var(--color-primary)' : 'transparent',
                 backgroundColor: activeTab === 'collection' ? 'rgba(223, 177, 91, 0.1)' : 'transparent',
                 color: activeTab === 'collection' ? 'var(--color-primary)' : 'var(--text-secondary)'
               }}
             >
-              📊 Coleção
+              Coleção
             </button>
           </nav>
         </div>
@@ -230,28 +230,24 @@ function App() {
               }}
             />
           )}
-          
           {activeTab === 'builder' && <Builder />}
-
           {activeTab === 'binder' && <Binder />}
-
           {activeTab === 'collection' && <Collection />}
+          {/* Footer */}
+          <footer style={{ 
+            borderTop: '1px solid var(--border-color)', 
+            padding: '1.5rem 0', 
+            background: 'var(--surface-color)',
+            textAlign: 'center'
+          }}>
+            <div className="container">
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+                DeckForge &copy; {new Date().getFullYear()} - Construído com React, Dexie (IndexedDB) e YGOPRODeck API. Funcionamento offline ativado.
+              </p>
+            </div>
+          </footer>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer style={{ 
-        borderTop: '1px solid var(--border-color)', 
-        padding: '1.5rem 0', 
-        background: 'var(--surface-color)',
-        textAlign: 'center'
-      }}>
-        <div className="container">
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
-            DeckForge &copy; {new Date().getFullYear()} - Construído com React, Dexie (IndexedDB) e YGOPRODeck API. Funcionamento offline ativado.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -438,16 +438,16 @@ export default function Builder() {
 
             <div className="workspace-actions">
               <button className="btn-secondary" onClick={handleBackToList}>
-                ⬅️ Lista
+                Lista
               </button>
               <button className="btn-secondary" onClick={handleExportDeck}>
-                📥 YDK
+                YDK
               </button>
               <button className="btn-secondary" onClick={handleExportDeckJSON}>
-                📄 JSON
+                JSON
               </button>
               <button className="btn-primary" onClick={handleSaveDeck}>
-                💾 Salvar
+                Salvar
               </button>
             </div>
           </div>
