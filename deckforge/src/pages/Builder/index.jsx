@@ -402,15 +402,8 @@ export default function Builder() {
   return (
     <div className="builder-container builder-fade-in">
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <div className="spinner" style={{
-            width: '50px',
-            height: '50px',
-            border: '4px solid rgba(223, 177, 91, 0.1)',
-            borderTopColor: 'var(--color-primary)',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+        <div className="builder-loading" role="status" aria-label="Carregando deck">
+          <span className="builder-spinner" />
         </div>
       ) : editingDeck ? (
         /* ========================================================================= */
@@ -423,28 +416,28 @@ export default function Builder() {
               <span style={{ fontSize: '2rem' }}>🧱</span>
               <div>
                 <h2 className="workspace-title">{editingDeck.name}</h2>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                <span className={`workspace-save-status ${hasChanges ? 'has-changes' : ''}`}>
                   {hasChanges ? '• Alterações pendentes' : '• Salvo no navegador'}
                 </span>
                 <div className="deck-summary-counts">
-                  <span style={{ fontWeight: 700 }}>Resumo do Deck</span>
-                  <span>Main: <strong>{resolvedCards.filter(rc => rc.type === 'main').reduce((sum, rc) => sum + rc.quantity, 0)}/60</strong></span>
-                  <span>Extra: <strong>{resolvedCards.filter(rc => rc.type === 'extra').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
-                  <span>Side: <strong>{resolvedCards.filter(rc => rc.type === 'side').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
+                  <span className="deck-summary-label">Cartas no deck</span>
+                  <span>Main <strong>{resolvedCards.filter(rc => rc.type === 'main').reduce((sum, rc) => sum + rc.quantity, 0)}/60</strong></span>
+                  <span>Extra <strong>{resolvedCards.filter(rc => rc.type === 'extra').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
+                  <span>Side <strong>{resolvedCards.filter(rc => rc.type === 'side').reduce((sum, rc) => sum + rc.quantity, 0)}/15</strong></span>
                 </div>
               </div>
 
             </div>
 
             <div className="workspace-actions">
-              <button className="btn-secondary" onClick={handleBackToList}>
-                Lista
+              <button className="btn-secondary" onClick={handleBackToList} aria-label="Voltar para lista de decks">
+                ← Lista
               </button>
               <button className="btn-secondary" onClick={handleExportDeck}>
-                YDK
+                Exportar YDK
               </button>
               <button className="btn-secondary" onClick={handleExportDeckJSON}>
-                JSON
+                Exportar JSON
               </button>
               <button className="btn-primary" onClick={handleSaveDeck}>
                 Salvar
@@ -452,14 +445,15 @@ export default function Builder() {
             </div>
           </div>
 
-          <div className="workspace-grid" style={{ marginTop: '1.5rem' }}>
+          <div className="workspace-grid">
             {/* Left side: Search Mini-Catalog */}
             <div className="glass-card mini-catalog-panel">
               <div className="mini-catalog-search-wrapper">
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                  Mini-Catálogo (Buscar Cartas)
+                <label className="mini-catalog-label" htmlFor="builder-card-search">
+                  Adicionar cartas
                 </label>
                 <input
+                  id="builder-card-search"
                   type="text"
                   placeholder="Buscar pelo nome..."
                   value={localQuery}
@@ -489,14 +483,15 @@ export default function Builder() {
                           }}
                         />
                         <div className="mini-card-info">
-                          <span
+                          <button
                             className="mini-card-name"
+                            type="button"
                             onClick={() => setSelectedDetailCardId(card.id)}
                           >
                             {card.name}
-                          </span>
+                          </button>
                           <div className="mini-card-meta">
-                            <span>{card.type.includes('Spell') ? 'Spell' : card.type.includes('Trap') ? 'Trap' : card.race}</span>
+                            <span>{card.type.includes('Spell') ? 'Magia' : card.type.includes('Trap') ? 'Armadilha' : card.race}</span>
                           </div>
                         </div>
                         <div className="mini-card-actions">
@@ -655,14 +650,11 @@ export default function Builder() {
         /*                           LIST VIEW OF DECK LISTS                         */
         /* ========================================================================= */
         <div className="decks-list-view builder-fade-in">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <div>
-              <h2 style={{ margin: 0, background: 'var(--gradient-gold)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Decks do Usuário
-              </h2>
-              <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                Crie, importe no formato YDK ou clone a partir de baralhos oficiais.
-              </p>
+          <div className="decks-list-header">
+            <div className="decks-heading">
+              <span className="builder-eyebrow">Seu espaço de estratégia</span>
+              <h2 className="decks-title">Meus decks</h2>
+              <p>Crie, importe em YDK ou comece com uma coleção oficial.</p>
             </div>
 
             <div className="decks-actions-bar">
@@ -686,7 +678,7 @@ export default function Builder() {
             </div>
           </div>
 
-          <div className="decks-grid" style={{ marginTop: '1.5rem' }}>
+          <div className="decks-grid">
             {decks.length === 0 ? (
               <div className="empty-decks">
                 <span>🧱</span>
@@ -700,21 +692,22 @@ export default function Builder() {
                 const sideQty = deck.cards.filter(c => c.type === 'side').reduce((sum, c) => sum + c.quantity, 0);
 
                 return (
-                  <div
-                    className="glass-card deck-card"
-                    key={deck.id}
-                    onClick={() => startEditingDeck(deck)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="deck-card-header">
-                      <span className="deck-card-icon">🃏</span>
-                      <div className="deck-card-info">
+                  <article className="glass-card deck-card" key={deck.id}>
+                    <button
+                      className="deck-card-header"
+                      type="button"
+                      onClick={() => startEditingDeck(deck)}
+                      aria-label={`Editar deck ${deck.name}`}
+                    >
+                      <span className="deck-card-icon" aria-hidden="true">🃏</span>
+                      <span className="deck-card-info">
                         <span className="deck-card-name">{deck.name}</span>
                         <span className="deck-card-date">
-                          Atualizado em: {new Date(deck.updatedAt).toLocaleDateString()}
+                          Atualizado em {new Date(deck.updatedAt).toLocaleDateString('pt-BR')}
                         </span>
-                      </div>
-                    </div>
+                      </span>
+                      <span className="deck-card-arrow" aria-hidden="true">↗</span>
+                    </button>
 
                     <div className="deck-card-stats">
                       <div className="stat-item">
@@ -739,7 +732,7 @@ export default function Builder() {
                         Excluir
                       </button>
                     </div>
-                  </div>
+                  </article>
                 );
               })
             )}

@@ -122,56 +122,79 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
 
   return (
     <div className="catalog-container">
-      
+      <header className="catalog-header">
+        <div>
+          <span className="catalog-eyebrow">Biblioteca de cartas</span>
+          <h1 className="catalog-title">Catálogo</h1>
+          <p className="catalog-description">
+            Pesquise cartas e encontre a peça certa para sua estratégia.
+          </p>
+        </div>
+        <div className="catalog-total" aria-live="polite">
+          <strong>{total.toLocaleString('pt-BR')}</strong>
+          <span>{total === 1 ? 'carta encontrada' : 'cartas encontradas'}</span>
+        </div>
+      </header>
+
       <div className="top-search-row">
         <div className="filter-group search-only-group">
-          <label>Search Name / Description</label>
-          <input 
-            type="text" 
-            placeholder="Ex: Dark Magician, Blue-Eyes, Ash..." 
+          <label htmlFor="catalog-search">Buscar cartas</label>
+          <div className="catalog-search-field">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
+            <input
+            id="catalog-search"
+            type="search"
+            placeholder="Nome ou descrição da carta..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             className="filter-input"
           />
+          </div>
         </div>
 
         <button
           className="filters-toggle-btn"
           onClick={() => setShowFilters(prev => !prev)}
+          aria-expanded={showFilters}
+          aria-controls="catalog-filters"
         >
-          {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4 7h16M7 12h10m-7 5h4" />
+          </svg>
+          {showFilters ? 'Ocultar filtros' : 'Filtros'}
         </button>
       </div>
       {/* Info & Reset Button */}
       <div className="filters-summary-footer">
-        <span className="results-count">
-          Cards found: <strong>{total}</strong>
-        </span>
         {(query || type || attribute || race || archetype || rarity || selectedSet) && (
           <button onClick={handleResetFilters} className="clear-filters-btn">
-            🧹 Clear Filters
+            Limpar filtros
           </button>
         )}
       </div>
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="glass-card filters-panel">
+        <div className="glass-card filters-panel" id="catalog-filters">
           
           {/* Row 1: Type */}
           <div className="filters-row-primary">
             {/* Card Type Filter */}
             <div className="filter-group">
-              <label>Card Type</label>
+              <label htmlFor="catalog-type">Tipo de carta</label>
               <select 
+                id="catalog-type"
                 value={type}
                 onChange={e => { setType(e.target.value); setRace(''); setAttribute(''); }}
                 className="filter-select"
               >
-                <option value="">All</option>
-                <option value="Monster">Monster</option>
-                <option value="Spell">Spell Card</option>
-                <option value="Trap">Trap Card</option>
+                <option value="">Todos os tipos</option>
+                <option value="Monster">Monstro</option>
+                <option value="Spell">Magia</option>
+                <option value="Trap">Armadilha</option>
               </select>
             </div>
           </div>
@@ -180,42 +203,45 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
         <div className="filters-row-secondary">
           {/* Monster Attribute */}
           <div className="filter-group">
-            <label className={type === 'Spell' || type === 'Trap' ? 'disabled' : ''}>
-              Attribute
+            <label htmlFor="catalog-attribute" className={type === 'Spell' || type === 'Trap' ? 'disabled' : ''}>
+              Atributo
             </label>
             <select 
+              id="catalog-attribute"
               value={attribute}
               onChange={e => setAttribute(e.target.value)}
               disabled={type === 'Spell' || type === 'Trap'}
               className="filter-select"
             >
-              <option value="">All</option>
+              <option value="">Todos</option>
               {ATTRIBUTES.map(attr => <option key={attr} value={attr}>{attr}</option>)}
             </select>
           </div>
 
           {/* Sub-type/Race */}
           <div className="filter-group">
-            <label>Property / Sub-type</label>
+            <label htmlFor="catalog-race">Raça / subtipo</label>
             <select 
+              id="catalog-race"
               value={race}
               onChange={e => setRace(e.target.value)}
               className="filter-select"
             >
-              <option value="">All</option>
+              <option value="">Todos</option>
               {getAvailableRaces().map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
 
           {/* Archetype */}
           <div className="filter-group">
-            <label>Archetype</label>
+            <label htmlFor="catalog-archetype">Arquétipo</label>
             <select 
+              id="catalog-archetype"
               value={archetype}
               onChange={e => setArchetype(e.target.value)}
               className="filter-select"
             >
-              <option value="">All</option>
+              <option value="">Todos</option>
               {archetypes.map(arch => <option key={arch} value={arch}>{arch}</option>)}
             </select>
           </div>
@@ -228,7 +254,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
               onChange={e => setSelectedSet(e.target.value)}
               className="filter-select"
             >
-              <option value="">All</option>
+              <option value="">Todas as coleções</option>
               {sets.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
@@ -237,13 +263,14 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
         {/* Row 3: Rarity */}
         <div className="filters-row-secondary">
           <div className="filter-group">
-            <label>Rarity</label>
+            <label htmlFor="catalog-rarity">Raridade</label>
             <select
+              id="catalog-rarity"
               value={rarity}
               onChange={e => setRarity(e.target.value)}
               className="filter-select"
             >
-              <option value="">All</option>
+              <option value="">Todas</option>
               {rarities.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
@@ -254,25 +281,33 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
       {/* Cards Grid */}
       {cards.length === 0 ? (
         <div className="empty-catalog">
-          <span>🔍</span>
-          <h3>No cards match your search criteria.</h3>
+          <span aria-hidden="true">⌕</span>
+          <h2>Nenhuma carta encontrada</h2>
+          <p>Tente outro termo ou ajuste os filtros para ampliar a busca.</p>
+          {(query || type || attribute || race || archetype || rarity || selectedSet) && (
+            <button onClick={handleResetFilters} className="btn-secondary">
+              Limpar filtros
+            </button>
+          )}
         </div>
       ) : (
         <div>
-          <div className="cards-grid">
+          <div className="cards-grid" aria-label="Resultados do catálogo">
             {cards.map(card => {
               const isSpell = card.type.includes('Spell');
               const isTrap = card.type.includes('Trap');
               const cardCategory = isSpell ? 'spell' : isTrap ? 'trap' : 'monster';
               
               return (
-                <div 
+                <button
                   key={card.id}
                   onClick={() => setSelectedCardId(card.id)}
                   className={`card-item ${cardCategory}`}
+                  type="button"
+                  aria-label={`Ver detalhes de ${card.name}`}
                 >
                   {/* Card Image Container */}
-                  <div className="card-image-wrapper">
+                  <span className="card-image-wrapper">
                     <img 
                       src={card.image_url_small} 
                       alt={card.name}
@@ -282,20 +317,21 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
                         e.target.src = appLogo;
                       }}
                     />
-                  </div>
+                    <span className="card-open-hint" aria-hidden="true">Ver carta</span>
+                  </span>
                   
                   {/* Card Label */}
-                  <div className="card-info">
-                    <div className="card-name">
+                  <span className="card-info">
+                    <span className="card-name">
                       {card.name}
-                    </div>
+                    </span>
                     
                     {/* Small tag indicator */}
-                    <div className={`card-tag ${cardCategory}`}>
-                      {isSpell ? 'Spell' : isTrap ? 'Trap' : card.race}
-                    </div>
-                  </div>
-                </div>
+                    <span className={`card-tag ${cardCategory}`}>
+                      {isSpell ? 'Magia' : isTrap ? 'Armadilha' : card.race}
+                    </span>
+                  </span>
+                </button>
               );
             })}
           </div>
@@ -304,7 +340,7 @@ export default function Catalog({ initialSet, onClearInitialSet, onSelectSet }) 
           {hasMore && (
             <div className="load-more-wrapper">
               <button className="btn-secondary" onClick={handleLoadMore}>
-                Load More Cards
+                Carregar mais cartas
               </button>
             </div>
           )}
