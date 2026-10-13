@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import './style.css';
-import appLogo from '/favicon.png';
-import PWABadge from '../../PWABadge.jsx';
+import appLogo from '/icons/pwa-512x512.png';
 import { checkAndSyncCards } from '../../services/cardService.js';
 import Home from '../Home/index.jsx';
 import Catalog from '../Catalog/index.jsx';
@@ -79,7 +78,6 @@ function App() {
   // Renders the main App once database is ready
   return (
     <div className="app-shell">
-      <PWABadge/>
       {/* Header */}
       <header className="app-header">
         <div className="container app-header-content">

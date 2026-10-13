@@ -1,4 +1,4 @@
-import './PWABadge.css'
+import './style.css'
 
 import { useEffect, useState } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'

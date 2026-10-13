@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { searchCards, getArchetypes, getCardSets, getRarities } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
-import appLogo from '/favicon.png';
+import appLogo from '/icons/pwa-512x512.png';
 import './style.css';
 
 const ATTRIBUTES = ['DARK', 'LIGHT', 'EARTH', 'WATER', 'FIRE', 'WIND', 'DIVINE'];

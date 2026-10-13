@@ -13,7 +13,7 @@ import {
   getCardSets
 } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
-import appLogo from '/favicon.png';
+import appLogo from '/icons/pwa-512x512.png';
 import './style.css';
 
 export default function Builder() {

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getCollectionItems, updateCollectionQuantity, clearCollection, addCardToCollection } from '../../services/collectionService';
 import { getCardById, getCardsBySetName } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
-import appLogo from '/favicon.png';
+import appLogo from '/icons/pwa-512x512.png';
 import './style.css';
 
 const SORT_OPTIONS = [

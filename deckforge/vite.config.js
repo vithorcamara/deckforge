@@ -14,23 +14,37 @@ export default defineConfig({
     manifest: {
       name: 'DeckForge',
       short_name: 'DeckForge',
-      description: 'DeckForge',
-      theme_color: '#0c0e12',
+      description: 'Explore cartas, monte decks e gerencie sua coleção.',
+      lang: 'pt-BR',
+      start_url: '/',
+      display: 'standalone',
+      background_color: '#0c0e12',
+      theme_color: '#dfb15b',
 
       icons: [{
-        src: 'pwa-64x64.png',
+        src: '/icons/pwa-64x64.png',
         sizes: '64x64',
         type: 'image/png',
       }, {
-        src: 'pwa-192x192.png',
+        src: '/icons/pwa-192x192.png',
         sizes: '192x192',
         type: 'image/png',
       }, {
-        src: 'pwa-512x512.png',
+        src: '/icons/pwa-384x384.png',
+        sizes: '384x384',
+        type: 'image/png',
+      }, {
+        src: '/icons/pwa-512x512.png',
         sizes: '512x512',
         type: 'image/png',
       }, {
-        src: 'maskable-icon-512x512.png',
+        src: '/icons/pwa-192x192-maskable.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: '/icons/pwa-512x512-maskable.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',

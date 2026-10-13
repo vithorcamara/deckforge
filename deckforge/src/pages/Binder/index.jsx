@@ -10,7 +10,7 @@ import {
   importBinderJSON
 } from '../../services/binderService';
 import CardDetailModal from '../../components/CardDetailModal';
-import appLogo from '/favicon.png';
+import appLogo from '/icons/pwa-512x512.png';
 import './style.css';
 
 function createSlots(rows, cols, existingSlots = []) {
