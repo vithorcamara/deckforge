@@ -1,30 +1,171 @@
+.PWABadge {
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 1000;
+  width: min(25rem, calc(100vw - 2.5rem));
+  animation: pwa-badge-enter 220ms ease-out both;
+}
+
 .PWABadge-toast {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    margin: 16px;
-    padding: 12px;
-    border: 1px solid #8885;
-    border-radius: 4px;
-    z-index: 1000;
-    text-align: left;
-    box-shadow: 3px 4px 5px 0 #8885;
-    background-color: white;
-    max-width: min(420px, calc(100vw - 32px));
+  position: relative;
+  overflow: hidden;
+  padding: 1.125rem;
+  border: 1px solid var(--glass-border, rgba(223, 177, 91, 0.2));
+  border-radius: var(--border-radius-lg, 20px);
+  background:
+    radial-gradient(ellipse at top right, rgba(223, 177, 91, 0.12), transparent 55%),
+    var(--gradient-card, linear-gradient(145deg, #1e212b, #14161d));
+  box-shadow: var(--shadow-lg, 0 16px 48px rgba(0, 0, 0, 0.5)), var(--shadow-gold, 0 0 20px rgba(223, 177, 91, 0.12));
+  color: var(--text-primary, #f6f7f8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
-.PWABadge-message {
-    margin-bottom: 8px;
-    color: #222;
+
+.PWABadge-toast::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--gradient-gold, linear-gradient(180deg, #dfb15b, #c87937));
+  content: '';
 }
+
+.PWABadge-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.PWABadge-icon {
+  display: grid;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid rgba(223, 177, 91, 0.2);
+  border-radius: 0.875rem;
+  background: rgba(223, 177, 91, 0.1);
+  color: var(--color-primary, #dfb15b);
+}
+
+.PWABadge-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.PWABadge-copy {
+  min-width: 0;
+  padding-top: 0.125rem;
+}
+
+.PWABadge-title {
+  margin: 0;
+  color: var(--text-primary, #f6f7f8);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.PWABadge-description {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary, #b8bdc6);
+  font-size: 0.825rem;
+  line-height: 1.5;
+}
+
 .PWABadge-buttons {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
+
 .PWABadge-toast-button {
-    border: 1px solid #8885;
-    outline: none;
-    border-radius: 2px;
-    padding: 3px 10px;
-    cursor: pointer;
+  display: inline-flex;
+  min-height: 2.375rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm, 6px);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background-color var(--transition-fast, 150ms ease),
+    border-color var(--transition-fast, 150ms ease),
+    color var(--transition-fast, 150ms ease),
+    transform var(--transition-fast, 150ms ease);
+}
+
+.PWABadge-toast-button:hover {
+  transform: translateY(-1px);
+}
+
+.PWABadge-toast-button:focus-visible {
+  outline: 2px solid var(--color-primary, #dfb15b);
+  outline-offset: 3px;
+}
+
+.PWABadge-toast-button--primary {
+  background: var(--gradient-gold, linear-gradient(135deg, #dfb15b, #c87937));
+  color: var(--bg-color, #0c0e12);
+}
+
+.PWABadge-toast-button--primary:hover {
+  filter: brightness(1.08);
+}
+
+.PWABadge-toast-button--secondary {
+  border-color: var(--border-color, rgba(255, 255, 255, 0.1));
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary, #b8bdc6);
+}
+
+.PWABadge-toast-button--secondary:hover {
+  border-color: var(--glass-border, rgba(223, 177, 91, 0.25));
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary, #f6f7f8);
+}
+
+@keyframes pwa-badge-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .PWABadge {
+    right: max(0.75rem, env(safe-area-inset-right));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    width: calc(100vw - 1.5rem);
+  }
+
+  .PWABadge-toast {
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .PWABadge {
+    animation: none;
+  }
+
+  .PWABadge-toast-button {
+    transition: none;
+  }
 }
