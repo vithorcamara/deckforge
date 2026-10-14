@@ -663,6 +663,98 @@
   border-radius: 50%;
   animation: builder-spin 800ms linear infinite;
 }
+.decks-list-header {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.decks-heading p {
+  max-width: 34rem;
+}
+
+.decks-actions-bar > button,
+.decks-actions-bar > label,
+.workspace-actions button,
+.builder-modal-actions button {
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.decks-actions-bar > button:focus-visible,
+.decks-actions-bar > label:focus-within,
+.workspace-actions button:focus-visible,
+.builder-modal-actions button:focus-visible,
+.builder-modal-close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.workspace-title-wrapper > span {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(223, 177, 91, 0.2);
+  border-radius: 0.85rem;
+  background: rgba(223, 177, 91, 0.1);
+}
+
+.workspace-header {
+  border-bottom-color: var(--glass-border);
+}
+
+.mini-catalog-panel {
+  background: var(--gradient-card);
+  box-shadow: var(--shadow-md);
+}
+
+.mini-card-item {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.mini-card-image {
+  background: #101219;
+}
+
+.deck-section {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
+}
+
+.deck-section-title:nth-of-type(1) {
+  color: var(--color-primary);
+}
+
+.deck-section-title:nth-of-type(2) {
+  color: var(--color-secondary);
+}
+
+.deck-section-title:nth-of-type(3) {
+  color: #2ec4b6;
+}
+
+.deck-section-title span {
+  color: var(--text-muted);
+}
+
+.deck-item-row {
+  background: rgba(0, 0, 0, 0.2);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.deck-item-row:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.deck-item-img:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.builder-modal-content {
+  border-radius: var(--border-radius-md);
+}
+
 
 @keyframes builder-spin {
   to {
@@ -1157,6 +1249,7 @@
 
   .mini-catalog-panel {
     position: static;
+    width: 100%;
     max-height: 24rem;
   }
 
@@ -1250,6 +1343,11 @@
   .mini-card-item,
   .mini-card-image,
   .deck-item-img,
+  .deck-item-row,
+  .decks-actions-bar > button,
+  .decks-actions-bar > label,
+  .workspace-actions button,
+  .builder-modal-actions button,
   .btn-mini-add,
   .btn-ctrl {
     transition: none;

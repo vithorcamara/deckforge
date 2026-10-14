@@ -31,6 +31,7 @@ export default function Binder() {
   const [selectedBinderId, setSelectedBinderId] = useState(null);
   const [currentBinder, setCurrentBinder] = useState(null);
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
+  const [pageTransitionDirection, setPageTransitionDirection] = useState('next');
   const [createName, setCreateName] = useState('Novo Binder');
   const [createRows, setCreateRows] = useState(3);
   const [createCols, setCreateCols] = useState(3);
@@ -137,6 +138,14 @@ export default function Binder() {
     setSelectedPageIndex(0);
     setSelectedSlotId(binder.pages[0]?.slots[0]?.id || null);
     setHasChanges(true);
+  };
+
+  const handleSelectPage = (page) => {
+    if (page.pageIndex !== selectedPageIndex) {
+      setPageTransitionDirection(page.pageIndex > selectedPageIndex ? 'next' : 'previous');
+    }
+    setSelectedPageIndex(page.pageIndex);
+    setSelectedSlotId(page.slots[0]?.id || null);
   };
 
   const currentPage = useMemo(() => currentBinder?.pages?.[selectedPageIndex] || null, [currentBinder, selectedPageIndex]);
@@ -273,14 +282,34 @@ export default function Binder() {
 
   return (
     <div className="binder-container">
-      <div className="binder-header glass-card">
-        <div>
-          <h2>Binder Virtual</h2>
-          <p className="muted">
-            Crie Binder com páginas fixas, configure a matriz ao criar e use apenas cartas da coleção ou com sets em comum.
+      <section className="binder-header binder-hero glass-card" aria-labelledby="binder-hero-title">
+        <div className="binder-hero-content">
+          <span className="binder-hero-eyebrow">
+            <span className="binder-hero-eyebrow-mark" aria-hidden="true" />
+            Organize sua coleção
+          </span>
+          <h1 className="binder-hero-title" id="binder-hero-title">
+            Seu Binder, <span>do seu jeito.</span>
+          </h1>
+          <p className="binder-hero-description">
+            Monte páginas personalizadas e organize cartas da sua coleção ou de sets em comum.
           </p>
+          <div className="binder-hero-note">
+            <span className="binder-hero-note-dot" aria-hidden="true" />
+            Páginas ajustáveis para acompanhar cada coleção
+          </div>
         </div>
-      </div>
+        <div className="binder-hero-art" aria-hidden="true">
+          <div className="binder-hero-art-page binder-hero-art-page-back" />
+          <div className="binder-hero-art-page binder-hero-art-page-middle" />
+          <div className="binder-hero-art-page binder-hero-art-page-front">
+            <span className="binder-hero-art-ring binder-hero-art-ring-one" />
+            <span className="binder-hero-art-ring binder-hero-art-ring-two" />
+            <span className="binder-hero-art-ring binder-hero-art-ring-three" />
+            <span className="binder-hero-art-card">DF</span>
+          </div>
+        </div>
+      </section>
 
       <div className={`binder-main-grid`}>
         <aside className={`binder-sidebar glass-card`}>
@@ -401,23 +430,26 @@ export default function Binder() {
                 </div>
               </div>
 
-              <div className="binder-pages-tabs">
+              <nav className="binder-pages-tabs" aria-label="Índice de páginas do Binder">
                 {currentBinder.pages.map((page) => (
                   <button
                     key={page.pageIndex}
                     className={`page-tab ${selectedPageIndex === page.pageIndex ? 'active' : ''}`}
-                    onClick={() => {
-                      setSelectedPageIndex(page.pageIndex);
-                      setSelectedSlotId(page.slots[0]?.id || null);
-                    }}
+                    type="button"
+                    aria-label={`Ir para página ${page.pageIndex + 1}`}
+                    aria-current={selectedPageIndex === page.pageIndex ? 'page' : undefined}
+                    onClick={() => handleSelectPage(page)}
                   >
-                    {page.pageIndex + 1}
+                    {String(page.pageIndex + 1).padStart(2, '0')}
                   </button>
                 ))}
-              </div>
+              </nav>
 
               <div className="binder-editor-body">
-                <div className="binder-grid-panel">
+                <div
+                  className={`binder-grid-panel binder-page-transition page-turn-${pageTransitionDirection}`}
+                  key={selectedPageIndex}
+                >
                   <div className="binder-grid-header">
                     <strong>Página - {selectedPageIndex + 1}</strong>
                     <button className="btn-secondary" onClick={handleClearSlot} disabled={!selectedSlotId}>
