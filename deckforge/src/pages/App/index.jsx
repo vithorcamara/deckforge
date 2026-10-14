@@ -91,36 +91,54 @@ function App() {
           </div>
           
           {/* Navigation Menu */}
-          <nav className="app-nav">
+          <nav className="app-nav" aria-label="Navegação principal">
             <button 
               className={`app-nav-button ${activeTab === 'home' ? 'active' : ''}`}
               onClick={() => setActiveTab('home')}
             >
-              Início
+              <svg className="app-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z" />
+              </svg>
+              <span>Início</span>
             </button>
             <button 
               className={`app-nav-button ${activeTab === 'catalog' ? 'active' : ''}`}
               onClick={() => setActiveTab('catalog')}
             >
-              Catálogo
+              <svg className="app-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="10.8" cy="10.8" r="6.8" />
+                <path d="m16 16 5 5" />
+              </svg>
+              <span>Catálogo</span>
             </button>
             <button 
               className={`app-nav-button ${activeTab === 'builder' ? 'active' : ''}`}
               onClick={() => setActiveTab('builder')}
             >
-              Deck Builder
+              <svg className="app-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="4" y="3" width="16" height="18" rx="2" />
+                <path d="M8 7h8M8 11h8M8 15h5" />
+              </svg>
+              <span className="app-nav-label-desktop">Deck Builder</span>
+              <span className="app-nav-label-mobile">Deck</span>
             </button>
             <button 
               className={`app-nav-button ${activeTab === 'binder' ? 'active' : ''}`}
               onClick={() => setActiveTab('binder')}
             >
-              Binder
+              <svg className="app-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 4h14v16H5zM9 4v16M12 8h4M12 12h4" />
+              </svg>
+              <span>Binder</span>
             </button>
             <button 
               className={`app-nav-button ${activeTab === 'collection' ? 'active' : ''}`}
               onClick={() => setActiveTab('collection')}
             >
-              Coleção
+              <svg className="app-nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 7h8v6H3zM13 7h8v6h-8zM3 15h8v6H3zM13 15h8v6h-8z" />
+              </svg>
+              <span>Coleção</span>
             </button>
           </nav>
         </div>
