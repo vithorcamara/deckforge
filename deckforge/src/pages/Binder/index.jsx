@@ -32,6 +32,7 @@ export default function Binder() {
   const [currentBinder, setCurrentBinder] = useState(null);
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
   const [pageTransitionDirection, setPageTransitionDirection] = useState('next');
+  const [transitioningFromPageIndex, setTransitioningFromPageIndex] = useState(null);
   const [createName, setCreateName] = useState('Novo Binder');
   const [createRows, setCreateRows] = useState(3);
   const [createCols, setCreateCols] = useState(3);
@@ -87,6 +88,13 @@ export default function Binder() {
   }, []);
 
   useEffect(() => {
+    if (transitioningFromPageIndex === null) return undefined;
+    const duration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 620;
+    const timeoutId = window.setTimeout(() => setTransitioningFromPageIndex(null), duration);
+    return () => window.clearTimeout(timeoutId);
+  }, [transitioningFromPageIndex, selectedPageIndex]);
+
+  useEffect(() => {
     if (!currentBinder) return;
     const cardIds = Array.from(new Set(
       currentBinder.pages.flatMap((page) => page.slots.filter((slot) => slot.cardId).map((slot) => slot.cardId))
@@ -127,6 +135,7 @@ export default function Binder() {
       }))
     });
     setSelectedPageIndex(0);
+    setTransitioningFromPageIndex(null);
     setSelectedSlotId(binder.pages?.[0]?.slots?.[0]?.id || null);
     setHasChanges(false);
   };
@@ -136,6 +145,7 @@ export default function Binder() {
     setCurrentBinder(binder);
     setSelectedBinderId(null);
     setSelectedPageIndex(0);
+    setTransitioningFromPageIndex(null);
     setSelectedSlotId(binder.pages[0]?.slots[0]?.id || null);
     setHasChanges(true);
   };
@@ -143,12 +153,21 @@ export default function Binder() {
   const handleSelectPage = (page) => {
     if (page.pageIndex !== selectedPageIndex) {
       setPageTransitionDirection(page.pageIndex > selectedPageIndex ? 'next' : 'previous');
+      setTransitioningFromPageIndex(selectedPageIndex);
     }
     setSelectedPageIndex(page.pageIndex);
     setSelectedSlotId(page.slots[0]?.id || null);
   };
 
   const currentPage = useMemo(() => currentBinder?.pages?.[selectedPageIndex] || null, [currentBinder, selectedPageIndex]);
+  const transitioningPage = transitioningFromPageIndex === null
+    ? null
+    : currentBinder?.pages?.[transitioningFromPageIndex] || null;
+  const isPreviousPageTransition = transitioningPage && pageTransitionDirection === 'previous';
+  const stagePage = isPreviousPageTransition ? transitioningPage : currentPage;
+  const animatedPage = transitioningPage
+    ? (isPreviousPageTransition ? currentPage : transitioningPage)
+    : null;
 
   const getBinderCardCount = (cardId) => {
     if (!currentBinder) return 0;
@@ -446,42 +465,68 @@ export default function Binder() {
               </nav>
 
               <div className="binder-editor-body">
-                <div
-                  className={`binder-grid-panel binder-page-transition page-turn-${pageTransitionDirection}`}
-                  key={selectedPageIndex}
-                >
-                  <div className="binder-grid-header">
-                    <strong>Página - {selectedPageIndex + 1}</strong>
-                    <button className="btn-secondary" onClick={handleClearSlot} disabled={!selectedSlotId}>
-                      Limpar slot selecionado
-                    </button>
+                <div className={`binder-page-stage ${transitioningPage ? 'is-transitioning' : ''}`}>
+                  <div className="binder-grid-panel">
+                    <div className="binder-grid-header">
+                      <strong>Página - {(stagePage?.pageIndex ?? selectedPageIndex) + 1}</strong>
+                      <button className="btn-secondary" onClick={handleClearSlot} disabled={!selectedSlotId}>
+                        Limpar slot selecionado
+                      </button>
+                    </div>
+
+                    <div
+                      className="binder-slot-grid"
+                      style={{ gridTemplateColumns: `repeat(${currentBinder.cols}, minmax(0, 1fr))` }}
+                    >
+                      {stagePage?.slots.map((slot) => {
+                        const card = slot.cardId ? slotDetails[slot.cardId] : null;
+                        const ownedQty = getCollectionQty(slot.cardId);
+                        return (
+                          <button
+                            key={slot.id}
+                            type="button"
+                            className={`binder-slot ${selectedSlotId === slot.id ? 'selected' : ''} ${slot.cardId ? '' : 'empty-slot'} ${slot.cardId && ownedQty === 0 ? 'missing-slot' : ''}`}
+                            onClick={() => setSelectedSlotId(slot.id)}
+                          >
+                            {card ? (
+                              <img src={card.card_images?.[0]?.image_url_small || appLogo} alt={card.name} />
+                            ) : (
+                              <span>+</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
-                  <div
-                    className="binder-slot-grid"
-                    style={{ gridTemplateColumns: `repeat(${currentBinder.cols}, minmax(0, 1fr))` }}
-                  >
-                    {currentPage?.slots.map((slot) => {
-                      const card = slot.cardId ? slotDetails[slot.cardId] : null;
-                      const ownedQty = getCollectionQty(slot.cardId);
-                      return (
-                        <button
-                          key={slot.id}
-                          type="button"
-                          className={`binder-slot ${selectedSlotId === slot.id ? 'selected' : ''} ${slot.cardId ? '' : 'empty-slot'} ${slot.cardId && ownedQty === 0 ? 'missing-slot' : ''}`}
-                          onClick={() => setSelectedSlotId(slot.id)}
-                        >
-                          {card ? (
-                            <>
-                              <img src={card.card_images?.[0]?.image_url_small || appLogo} alt={card.name} />
-                            </>
-                          ) : (
-                            <span>+</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {animatedPage && (
+                    <div
+                      key={`${animatedPage.pageIndex}-${pageTransitionDirection}`}
+                      className={`binder-grid-panel ${isPreviousPageTransition ? 'binder-page-entering' : 'binder-page-outgoing'} page-turn-${pageTransitionDirection}`}
+                      aria-hidden="true"
+                    >
+                      <div className="binder-grid-header">
+                        <strong>Página - {animatedPage.pageIndex + 1}</strong>
+                      </div>
+                      <div
+                        className="binder-slot-grid"
+                        style={{ gridTemplateColumns: `repeat(${currentBinder.cols}, minmax(0, 1fr))` }}
+                      >
+                        {animatedPage.slots.map((slot) => {
+                          const card = slot.cardId ? slotDetails[slot.cardId] : null;
+                          const ownedQty = getCollectionQty(slot.cardId);
+                          return (
+                            <div
+                              key={slot.id}
+                              className={`binder-slot ${slot.cardId ? '' : 'empty-slot'} ${slot.cardId && ownedQty === 0 ? 'missing-slot' : ''}`}
+                            >
+                              {card ? <img src={card.card_images?.[0]?.image_url_small || appLogo} alt="" /> : <span>+</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="binder-search-panel glass-card">
