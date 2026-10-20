@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCollectionItems, updateCollectionQuantity, clearCollection, addCardToCollection } from '../../services/collectionService';
 import { getCardById, getCardsBySetName } from '../../services/cardService';
 import CardDetailModal from '../../components/CardDetailModal';
@@ -22,25 +22,27 @@ export default function Collection() {
   const [missingLoading, setMissingLoading] = useState(false);
   const [expandedMissing, setExpandedMissing] = useState({});
 
-  const getGroupingKey = (item) => {
+  const getGroupingKey = useCallback((item) => {
     if (!item.card) return 'Sem dados';
+    const selectedSet = item.card.card_sets?.find(set => set.set_code === item.setCode)
+      || item.card.card_sets?.[0];
 
     switch (sortMode) {
       case 'set':
-        return item.card.card_sets?.[0]?.set_name || 'Sem set';
+        return selectedSet?.set_name || 'Sem set';
       case 'rarity':
-        return item.card.card_sets?.[0]?.set_rarity || 'Sem raridade';
+        return selectedSet?.set_rarity || 'Sem raridade';
       case 'type':
         return item.card.type || 'Sem tipo';
       case 'setPrefix': {
-        const name = item.card.card_sets?.[0]?.set_name || '';
+        const name = selectedSet?.set_name || '';
         const prefix = name.split(/[-\s:]+/)[0];
         return prefix || 'Sem set';
       }
       default:
         return 'Ordem alfabética';
     }
-  };
+  }, [sortMode]);
 
   const loadCollection = async () => {
     setLoading(true);
@@ -77,7 +79,10 @@ export default function Collection() {
 
   const summary = useMemo(() => {
     const totalCopies = items.reduce((sum, item) => sum + item.quantity, 0);
-    const distinctSets = new Set(items.flatMap(item => item.card?.card_sets?.map(set => set.set_name) || [])).size;
+    const distinctSets = new Set(items.map(item => (
+      item.card?.card_sets?.find(set => set.set_code === item.setCode)?.set_name
+        || item.card?.card_sets?.[0]?.set_name
+    )).filter(Boolean)).size;
     return {
       totalCopies,
       distinctCards: items.length,
@@ -102,7 +107,7 @@ export default function Collection() {
     });
 
     return Array.from(groups.entries());
-  }, [items, sortMode]);
+  }, [items, getGroupingKey]);
 
   useEffect(() => {
     const loadMissingBySet = async () => {

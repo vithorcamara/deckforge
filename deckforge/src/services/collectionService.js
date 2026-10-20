@@ -10,31 +10,36 @@ export async function getCollectionItem(cardId) {
 
 export async function addCardToCollection(cardId, quantity = 1, setCode = '') {
   const id = Number(cardId);
-  const existing = await db.collection.get(id);
-  const newQty = (existing?.quantity || 0) + quantity;
-  if (newQty <= 0) {
-    await db.collection.delete(id);
-    return null;
-  }
+  return await db.transaction('rw', db.collection, async () => {
+    const existing = await db.collection.get(id);
+    const newQty = (existing?.quantity || 0) + quantity;
+    if (newQty <= 0) {
+      await db.collection.delete(id);
+      return null;
+    }
 
-  const item = {
-    cardId: id,
-    quantity: newQty,
-    setCode: setCode || existing?.setCode || ''
-  };
-  await db.collection.put(item);
-  return item;
+    const item = {
+      cardId: id,
+      quantity: newQty,
+      setCode: setCode || existing?.setCode || ''
+    };
+    await db.collection.put(item);
+    return item;
+  });
 }
 
 export async function updateCollectionQuantity(cardId, quantity) {
   const id = Number(cardId);
-  if (quantity <= 0) {
-    await db.collection.delete(id);
-    return null;
-  }
-  const item = { cardId: id, quantity };
-  await db.collection.put(item);
-  return item;
+  return await db.transaction('rw', db.collection, async () => {
+    if (quantity <= 0) {
+      await db.collection.delete(id);
+      return null;
+    }
+    const existing = await db.collection.get(id);
+    const item = { cardId: id, quantity, setCode: existing?.setCode || '' };
+    await db.collection.put(item);
+    return item;
+  });
 }
 
 export async function removeCardFromCollection(cardId) {

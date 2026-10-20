@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { searchCards, getCardById } from '../../services/cardService';
 import { getCollectionItems } from '../../services/collectionService';
 import {
@@ -48,22 +48,19 @@ export default function Binder() {
   const [loading, setLoading] = useState(true);
   const [importError, setImportError] = useState('');
 
-  const loadBinders = async () => {
+  const loadBinders = useCallback(async () => {
     setLoading(true);
     try {
       const allBinders = await getAllBinders();
       setBinders(allBinders.sort((a, b) => b.updatedAt - a.updatedAt));
-      if (!selectedBinderId && allBinders.length > 0 && !currentBinder) {
-        openBinder(allBinders[0]);
-      }
     } catch (err) {
       console.error('Erro ao carregar binders:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadCollectionInfo = async () => {
+  const loadCollectionInfo = useCallback(async () => {
     const collection = await getCollectionItems();
     const quantities = {};
     const setNames = new Set();
@@ -80,12 +77,12 @@ export default function Binder() {
 
     setCollectionQuantities(quantities);
     setCollectionSetNames(setNames);
-  };
+  }, []);
 
   useEffect(() => {
     loadBinders();
     loadCollectionInfo();
-  }, []);
+  }, [loadBinders, loadCollectionInfo]);
 
   useEffect(() => {
     if (transitioningFromPageIndex === null) return undefined;
@@ -125,7 +122,15 @@ export default function Binder() {
     return card.sets?.some((setName) => collectionSetNames.has(setName));
   };
 
-  const openBinder = (binder) => {
+  const openBinder = useCallback((binder, skipUnsavedChangesCheck = false) => {
+    if (
+      !skipUnsavedChangesCheck
+      && hasChanges
+      && !window.confirm('Existem alterações não salvas. Deseja descartá-las e abrir este Binder?')
+    ) {
+      return false;
+    }
+
     setSelectedBinderId(binder.id);
     setCurrentBinder({
       ...binder,
@@ -138,9 +143,22 @@ export default function Binder() {
     setTransitioningFromPageIndex(null);
     setSelectedSlotId(binder.pages?.[0]?.slots?.[0]?.id || null);
     setHasChanges(false);
-  };
+    return true;
+  }, [hasChanges]);
+
+  useEffect(() => {
+    if (!loading && !currentBinder && !selectedBinderId && binders.length > 0) {
+      openBinder(binders[0]);
+    }
+  }, [binders, currentBinder, loading, openBinder, selectedBinderId]);
 
   const startCreateBinder = () => {
+    if (!Number.isInteger(createPageCount) || createPageCount < 1 || createPageCount > 999) {
+      return;
+    }
+    if (hasChanges && !window.confirm('Existem alterações não salvas. Deseja descartá-las e criar outro Binder?')) {
+      return;
+    }
     const binder = createEmptyBinder(createName.trim() || 'Novo Binder', createRows, createCols, createPageCount * 2);
     setCurrentBinder(binder);
     setSelectedBinderId(null);
@@ -239,6 +257,7 @@ export default function Binder() {
   const handleDeleteBinder = async () => {
     if (!selectedBinderId) return;
     if (!confirm('Deseja excluir este Binder?')) return;
+    if (hasChanges && !window.confirm('As alterações não salvas também serão descartadas. Deseja continuar?')) return;
     try {
       await deleteBinder(selectedBinderId);
       setCurrentBinder(null);
@@ -269,6 +288,10 @@ export default function Binder() {
   const handleImportBinder = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (hasChanges && !window.confirm('Existem alterações não salvas. Deseja descartá-las e importar outro Binder?')) {
+      e.target.value = '';
+      return;
+    }
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
@@ -276,7 +299,7 @@ export default function Binder() {
         const imported = await importBinderJSON(jsonText);
         setImportError('');
         await loadBinders();
-        openBinder(imported);
+        openBinder(imported, true);
       } catch (err) {
         console.error('Erro ao importar Binder:', err);
         setImportError('Arquivo inválido. Verifique o conteúdo JSON');
@@ -387,17 +410,32 @@ export default function Binder() {
                   </select>
                 </label>
                 <label>
-                  Folhas
+                  Folhas (1 a 999)
                   <input
                     type="number"
+                    required
                     min={1}
                     max={999}
                     step={1}
                     value={createPageCount}
-                    onChange={(e) => setCreatePageCount(Number(e.target.value))}
+                    onChange={(e) => setCreatePageCount(e.target.value === '' ? '' : Number(e.target.value))}
+                    aria-invalid={!Number.isInteger(createPageCount) || createPageCount < 1 || createPageCount > 999}
+                    aria-describedby="binder-page-count-hint"
                   />
                 </label>
-                <button className="btn-primary" onClick={startCreateBinder}>
+                <span className="binder-page-count-hint" id="binder-page-count-hint">
+                  Cada folha cria duas páginas no Binder.
+                </span>
+                {(!Number.isInteger(createPageCount) || createPageCount < 1 || createPageCount > 999) && (
+                  <div className="import-error" role="alert">
+                    Informe um número inteiro entre 1 e 999.
+                  </div>
+                )}
+                <button
+                  className="btn-primary"
+                  onClick={startCreateBinder}
+                  disabled={!Number.isInteger(createPageCount) || createPageCount < 1 || createPageCount > 999}
+                >
                   + Novo Binder
                 </button>
               </div>

@@ -5,6 +5,7 @@ let cardSearchIndex = [];
 let cachedArchetypes = [];
 let cachedSets = [];
 let cachedRarities = [];
+let cachedCardsBySetName = null;
 
 /**
  * Checks if the local database is up to date and syncs it with YGOPRODeck API.
@@ -84,7 +85,8 @@ export async function checkAndSyncCards(onProgress = () => {}) {
  */
 async function loadSearchIndex() {
   const cards = await db.cards.toArray();
-  
+  const cardsBySetName = new Map();
+
   cardSearchIndex = cards.map(c => ({
     id: c.id,
     name: c.name,
@@ -111,9 +113,16 @@ async function loadSearchIndex() {
   cards.forEach(c => {
     if (c.archetype) archetypesSet.add(c.archetype);
     if (c.card_sets) {
+      const cardSetNames = new Set();
       c.card_sets.forEach(s => {
         if (s.set_name) setsSet.add(s.set_name);
         if (s.set_rarity) raritiesSet.add(s.set_rarity);
+        if (s.set_name) cardSetNames.add(s.set_name);
+      });
+      cardSetNames.forEach(setName => {
+        const setCards = cardsBySetName.get(setName) || [];
+        setCards.push(c);
+        cardsBySetName.set(setName, setCards);
       });
     }
   });
@@ -121,6 +130,7 @@ async function loadSearchIndex() {
   cachedArchetypes = Array.from(archetypesSet).sort();
   cachedSets = Array.from(setsSet).sort();
   cachedRarities = Array.from(raritiesSet).sort();
+  cachedCardsBySetName = cardsBySetName;
 }
 
 /**
@@ -206,6 +216,9 @@ export function searchCards({ query = '', type = '', attribute = '', race = '', 
  * Returns all cards that belong to a specific set name.
  */
 export async function getCardsBySetName(setName) {
+  if (cachedCardsBySetName) {
+    return cachedCardsBySetName.get(setName) || [];
+  }
   return await db.cards.filter(c => c.card_sets?.some(s => s.set_name === setName)).toArray();
 }
 

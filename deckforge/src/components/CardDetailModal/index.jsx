@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { getCardById } from '../../services/cardService';
 import { addCardToCollection, getCollectionItem } from '../../services/collectionService';
 import './style.css';
@@ -37,7 +38,7 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
 
   if (!cardId) return null;
 
-  return (
+  return createPortal(
     <div className="modal-backdrop" onClick={onClose}>
       <div
         className="glass-card modal-content"
@@ -245,6 +246,7 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
