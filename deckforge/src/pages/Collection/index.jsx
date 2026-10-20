@@ -145,51 +145,73 @@ export default function Collection() {
 
   return (
     <div className="collection-container">
-      <div className="glass-card collection-header">
-        <div>
-          <h2>Minha Coleção</h2>
-          <p className="muted">Registre as cartas que você possui e gerencie quantidades.</p>
-          <div className="collection-summary">
-            <span>{summary.distinctCards} cartas diferentes</span>
-            <span>{summary.totalCopies} cópias no total</span>
-            <span>{summary.distinctSets} sets</span>
+      <header className="collection-header">
+        <div className="collection-heading">
+          <span className="collection-eyebrow">Seu acervo</span>
+          <h1 className="collection-title">Minha coleção</h1>
+          <p className="collection-description">Registre suas cartas e acompanhe cada detalhe do seu acervo.</p>
+          <div className="collection-summary" aria-label="Resumo da coleção">
+            <div>
+              <strong>{summary.distinctCards}</strong>
+              <span>cartas diferentes</span>
+            </div>
+            <div>
+              <strong>{summary.totalCopies}</strong>
+              <span>cópias no total</span>
+            </div>
+            <div>
+              <strong>{summary.distinctSets}</strong>
+              <span>sets</span>
+            </div>
           </div>
         </div>
-        <div className="actions">
-          <div className="sort-controls">
-            <label>Ordenar por</label>
-            <select value={sortMode} onChange={e => setSortMode(e.target.value)}>
+        <div className="collection-actions">
+          <div className="collection-sort">
+            <label htmlFor="collection-sort">Ordenar por</label>
+            <select id="collection-sort" value={sortMode} onChange={e => setSortMode(e.target.value)}>
               {SORT_OPTIONS.map(option => (
                 <option key={option.key} value={option.key}>{option.label}</option>
               ))}
             </select>
           </div>
-          <button className="btn-danger" onClick={clearCollectionItems} disabled={loading || items.length === 0}>Limpar Coleção</button>
+          <button
+            className="collection-clear-btn"
+            onClick={clearCollectionItems}
+            disabled={loading || items.length === 0}
+          >
+            Limpar coleção
+          </button>
         </div>
-      </div>
+      </header>
 
       {loading ? (
-        <div className="empty-collection">Carregando...</div>
+        <div className="collection-state" role="status">Carregando sua coleção...</div>
       ) : items.length === 0 ? (
-        <div className="empty-collection">
-          <span>📭</span>
-          <h3>Sua coleção está vazia.</h3>
-          <p className="muted">Abra o Catálogo e adicione cartas à sua coleção clicando em uma carta.</p>
+        <div className="collection-state collection-empty">
+          <span className="collection-empty-icon" aria-hidden="true">✦</span>
+          <h2>Sua coleção está vazia</h2>
+          <p>Abra o Catálogo e adicione cartas à sua coleção para começar seu acervo.</p>
         </div>
       ) : (
-        <div>
+        <div className="collection-groups">
           {groupedItems.map(([groupName, groupItems]) => (
-            <div className="collection-group" key={groupName}>
+            <section className="collection-group" key={groupName} aria-label={`Grupo ${groupName}`}>
               <div className="collection-group-header">
                 <div>
-                  <strong>{groupName}</strong>
-                  <span className="group-meta">{groupItems.length} cartas</span>
+                  <h2>{groupName}</h2>
+                  <span className="group-meta">
+                    {groupItems.length} {groupItems.length === 1 ? 'carta' : 'cartas'}
+                  </span>
                   {sortMode === 'set' && missingLoading && (
                     <span className="loading-set-note">Carregando Set...</span>
                   )}
                 </div>
                 {sortMode === 'set' && missingBySet[groupName] && (
-                  <button className="toggle-missing-btn" onClick={() => toggleMissing(groupName)}>
+                  <button
+                    className="toggle-missing-btn"
+                    onClick={() => toggleMissing(groupName)}
+                    aria-expanded={Boolean(expandedMissing[groupName])}
+                  >
                     {expandedMissing[groupName] ? 'Ocultar' : `Faltam (${missingBySet[groupName].missing.length})`}
                   </button>
                 )}
@@ -197,25 +219,76 @@ export default function Collection() {
 
               <div className="collection-grid">
                 {groupItems.map(item => (
-                  <div className="collection-item" key={item.cardId} onClick={() => setSelectedCardId(item.cardId)}>
-                    <div className="thumb">
-                      <img src={item.card?.card_images?.[0]?.image_url_small || appLogo} alt={item.card?.name || item.cardId} />
+                  <article className="collection-item" key={item.cardId}>
+                    <button
+                      className="collection-card-open"
+                      onClick={() => setSelectedCardId(item.cardId)}
+                      type="button"
+                      aria-label={`Ver detalhes de ${item.card?.name || item.cardId}`}
+                    >
+                      <span className="collection-thumb">
+                        <img
+                          src={item.card?.card_images?.[0]?.image_url_small || appLogo}
+                          alt={item.card?.name || item.cardId}
+                          loading="lazy"
+                        />
+                      </span>
+                      <span className="collection-card-info">
+                        <span className="collection-card-name">{item.card?.name || 'Carta sem dados'}</span>
+                        <span className="collection-card-set">
+                          {item.setCode || item.card?.card_sets?.[0]?.set_code || 'Código não informado'}
+                        </span>
+                      </span>
+                    </button>
+                    <div className="qty-controls" aria-label={`Quantidade de ${item.card?.name || item.cardId}`}>
+                      <button
+                        onClick={() => changeQty(item.cardId, Math.max(0, item.quantity - 1))}
+                        type="button"
+                        aria-label={`Remover uma cópia de ${item.card?.name || item.cardId}`}
+                      >
+                        −
+                      </button>
+                      <span className="qty" aria-live="polite">{item.quantity}</span>
+                      <button
+                        onClick={() => changeQty(item.cardId, item.quantity + 1)}
+                        type="button"
+                        aria-label={`Adicionar uma cópia de ${item.card?.name || item.cardId}`}
+                      >
+                        +
+                      </button>
                     </div>
-                    <div className="qty-controls">
-                      <button onClick={() => changeQty(item.cardId, Math.max(0, item.quantity - 1))}>−</button>
-                      <span className="qty">{item.quantity}</span>
-                      <button onClick={() => changeQty(item.cardId, item.quantity + 1)}>+</button>
-                    </div>
-                  </div>
+                  </article>
                 ))}
 
                 {sortMode === 'set' && expandedMissing[groupName] && missingBySet[groupName] && !missingLoading && missingBySet[groupName].missing.map(card => (
-                  <div className="collection-item collection-item--missing" key={`missing-${card.id}`} onClick={() => setSelectedCardId(card.id)}>
-                    <div className="thumb">
-                      <img src={card.card_images?.[0]?.image_url_small || 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'} alt={card.name} />
-                    </div>
-                    <button className="btn-add-missing" onClick={(e) => { e.stopPropagation(); addMissingCard(card.id); }}>+</button>
-                  </div>
+                  <article className="collection-item collection-item--missing" key={`missing-${card.id}`}>
+                    <button
+                      className="collection-card-open"
+                      onClick={() => setSelectedCardId(card.id)}
+                      type="button"
+                      aria-label={`Ver detalhes de ${card.name}`}
+                    >
+                      <span className="collection-thumb">
+                        <img
+                          src={card.card_images?.[0]?.image_url_small || 'https://images.ygoprodeck.com/images/cards_small/back_high.jpg'}
+                          alt={card.name}
+                          loading="lazy"
+                        />
+                      </span>
+                      <span className="collection-card-info">
+                        <span className="collection-card-name">{card.name}</span>
+                        <span className="collection-card-set">Ainda não adicionada</span>
+                      </span>
+                    </button>
+                    <button
+                      className="btn-add-missing"
+                      onClick={() => addMissingCard(card.id)}
+                      type="button"
+                      aria-label={`Adicionar ${card.name} à coleção`}
+                    >
+                      +
+                    </button>
+                  </article>
                 ))}
               </div>
 
@@ -226,7 +299,7 @@ export default function Collection() {
               {sortMode === 'set' && expandedMissing[groupName] && !missingLoading && missingBySet[groupName] && missingBySet[groupName].missing.length === 0 && (
                 <div className="missing-empty">Parabéns! Você já possui todas as cartas desse set.</div>
               )}
-            </div>
+            </section>
           ))}
         </div>
       )}

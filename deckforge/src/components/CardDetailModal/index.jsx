@@ -9,15 +9,22 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
   const [collectionQty, setCollectionQty] = useState(0);
   const [selectedSetCode, setSelectedSetCode] = useState('');
   const [statusMessage, setStatusMessage] = useState('');
+  const [actionError, setActionError] = useState('');
+
+  const availableSets = (card?.card_sets || []).filter(
+    set => typeof set.set_code === 'string' && set.set_code.trim()
+  );
 
   useEffect(() => {
     if (!cardId) return;
     setLoading(true);
     setStatusMessage('');
+    setActionError('');
     getCardById(cardId)
       .then(async data => {
         setCard(data);
         setSelectedSetCode('');
+        setActionError('');
         const saved = await getCollectionItem(cardId);
         setCollectionQty(saved?.quantity || 0);
         setLoading(false);
@@ -32,13 +39,14 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-
       <div
         className="glass-card modal-content"
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Detalhes da carta"
       >
-        {/* Close Button */}
-        <button className="modal-close-btn" onClick={onClose}>
+        <button className="modal-close-btn" onClick={onClose} type="button" aria-label="Fechar detalhes da carta">
           &times;
         </button>
 
@@ -98,18 +106,42 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
               <div className="modal-collection-actions">
                 <button
                   className="btn-primary"
+                  type="button"
+                  disabled={availableSets.length > 0 && !selectedSetCode}
                   onClick={async () => {
-                    if (!selectedSetCode) {
-                      alert('Selecione um código de carta antes de adicionar à coleção.');
+                    const isSelectedSetAvailable = availableSets.some(set => set.set_code === selectedSetCode);
+                    if (availableSets.length > 0 && !isSelectedSetAvailable) {
+                      setActionError('Selecione uma edição disponível antes de adicionar a carta.');
                       return;
                     }
-                    const updated = await addCardToCollection(card.id, 1, selectedSetCode);
-                    setCollectionQty(updated?.quantity || 0);
-                    setStatusMessage('Carta adicionada à coleção!');
+
+                    setActionError('');
+                    try {
+                      const updated = await addCardToCollection(card.id, 1, selectedSetCode);
+                      setCollectionQty(updated?.quantity || 0);
+                      setStatusMessage(
+                        selectedSetCode
+                          ? 'Carta adicionada à coleção!'
+                          : 'Carta adicionada sem código de edição, pois nenhum está disponível.'
+                      );
+                    } catch (error) {
+                      console.error('Erro ao adicionar carta à coleção:', error);
+                      setActionError('Não foi possível adicionar a carta. Tente novamente.');
+                    }
                   }}
                 >
                   Adicionar à Coleção
                 </button>
+                {availableSets.length > 0 && !selectedSetCode && (
+                  <span className="modal-collection-hint">
+                    Selecione uma edição na lista para continuar.
+                  </span>
+                )}
+                {availableSets.length === 0 && (
+                  <span className="modal-collection-hint">
+                    Nenhum código de edição disponível para esta carta; ela será adicionada sem código.
+                  </span>
+                )}
                 {collectionQty > 0 && (
                   <span className="modal-collection-info">
                     Você já possui {collectionQty} cópia{collectionQty === 1 ? '' : 's'} desta carta.
@@ -118,34 +150,36 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                 {statusMessage && (
                   <div className="modal-collection-status">{statusMessage}</div>
                 )}
+                {actionError && (
+                  <div className="modal-collection-error" role="alert">{actionError}</div>
+                )}
               </div>
 
               {/* Card Sets Table */}
-              {card.card_sets && card.card_sets.length > 0 && (
+              {availableSets.length > 0 && (
                 <div className="modal-sets-section">
-                  <div className="modal-sets-title">
-                    Available Sets ({card.card_sets.length})
-                  </div>
+                  <h3 className="modal-sets-title">Edições disponíveis ({availableSets.length})</h3>
                   <div className="modal-selected-set">
-                    Selecionado: {selectedSetCode || 'Nenhum'}
+                    Edição selecionada: <strong>{selectedSetCode || 'Nenhuma'}</strong>
                   </div>
                   <div className="modal-sets-table-wrapper">
                     <table className="modal-sets-table">
+                      <caption className="visually-hidden">Selecione a edição da carta</caption>
                       <thead>
                         <tr>
-                          <th>Set Name</th>
-                          <th>Code</th>
-                          <th>Rarity</th>
+                          <th scope="col">Edição</th>
+                          <th scope="col">Código</th>
+                          <th scope="col">Raridade</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {card.card_sets.map((set, idx) => (
+                        {availableSets.map((set, idx) => (
                           <tr
                             key={idx}
                             className={selectedSetCode === set.set_code ? 'selected-set-row' : ''}
                             onClick={() => {
                               setSelectedSetCode(set.set_code);
-                              console.log(`Selected set code: ${set.set_code}`);
+                              setActionError('');
                             }}
                           >
                             <td className={`set-name ${onSelectSet ? 'clickable' : ''}`}>
@@ -154,7 +188,11 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
                                   type="radio"
                                   name="selectedSetCode"
                                   checked={selectedSetCode === set.set_code}
-                                  onChange={() => setSelectedSetCode(set.set_code)}
+                                  onChange={() => {
+                                    setSelectedSetCode(set.set_code);
+                                    setActionError('');
+                                  }}
+                                  aria-label={`Selecionar ${set.set_name} (${set.set_code})`}
                                 />
                                 <span onClick={() => onSelectSet && onSelectSet(set.set_name)}>{set.set_name}</span>
                               </label>
@@ -183,14 +221,14 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
 
               {/* Description */}
               <div className="modal-desc-section">
-                <div className="modal-desc-title">Description / Effect</div>
+                <h3 className="modal-desc-title">Descrição / efeito</h3>
                 <div className="modal-desc-body">{card.desc}</div>
               </div>
 
               {/* Card Prices */}
               {card.card_prices?.[0] && (
                 <div className="modal-prices-box">
-                  <div className="modal-prices-title">Average Prices (USD)</div>
+                  <h3 className="modal-prices-title">Preços médios (USD)</h3>
                   <div className="modal-prices-grid">
                     <div>Cardmarket: <span>${card.card_prices[0].cardmarket_price}</span></div>
                     <div>TCGPlayer: <span>${card.card_prices[0].tcgplayer_price}</span></div>
@@ -203,7 +241,7 @@ export default function CardDetailModal({ cardId, onClose, onSelectSet }) {
           </>
         ) : (
           <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '3rem' }}>
-            Card not found.
+            Carta não encontrada.
           </div>
         )}
       </div>
